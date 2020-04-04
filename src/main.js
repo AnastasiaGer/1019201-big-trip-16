@@ -560,20 +560,18 @@ const createTripDaysTemplate = () => {
   );
 };
 
+const siteHeaderControlsElement = document.querySelector(`.trip-controls`);
+const siteMainElement = document.querySelector(`.trip-events`);
+const siteHeaderElement = document.querySelector(`.trip-main`);
+
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
 const init = () => {
 
-  const siteHeaderElement = document.querySelector(`.trip-main`);
-
-
   render(siteHeaderElement, createTripInfoTemplate(), `afterbegin`);
-  render(siteHeaderElement, createTripCostTemplate(), `beforeend`);
-
-  const siteHeaderControlsElement = document.querySelector(`.trip-controls`);
-  const siteMainElement = document.querySelector(`.trip-events`);
+  render(siteHeaderElement, createTripCostTemplate(), `afterbegin`);
 
   render(siteHeaderControlsElement, createTripMenuTemplate(), `afterbegin`);
   render(siteHeaderControlsElement, createTripFilterTemplate(), `afterbegin`);
