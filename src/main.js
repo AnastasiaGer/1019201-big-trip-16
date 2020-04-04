@@ -6,10 +6,6 @@ const siteHeaderControlsElement = document.querySelector(`.trip-controls`);
 const siteMainElement = document.querySelector(`.trip-events`);
 const siteHeaderElement = document.querySelector(`.trip-main`);
 
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
 const createTripInfoTemplate = () => {
   return (
     ` <section class="trip-main__trip-info trip-info">
@@ -566,6 +562,10 @@ const createTripDaysTemplate = () => {
     </ul>
   </li>`
   );
+};
+
+const render = (container, template, place) => {
+  container.insertAdjacentHTML(place, template);
 };
 
 const init = () => {
