@@ -2,9 +2,6 @@
 
 const DAYS_COUNT = 3;
 
-const siteHeaderElement = document.querySelector(`.trip-controls`);
-const siteMainElement = document.querySelector(`.trip-events`);
-
 const createTripInfoTemplate = () => {
   return (
     ` <section class="trip-main__trip-info trip-info">
@@ -563,17 +560,23 @@ const createTripDaysTemplate = () => {
   );
 };
 
+const render = (container, template, place) => {
+  container.insertAdjacentHTML(place, template);
+};
+
 const init = () => {
 
-  const render = (container, template, place) => {
-    container.insertAdjacentHTML(place, template);
-  };
+  const siteHeaderElement = document.querySelector(`.trip-main`);
 
-  render(siteHeaderElement, createTripInfoTemplate(), `beforebegin`);
+
+  render(siteHeaderElement, createTripInfoTemplate(), `afterbegin`);
   render(siteHeaderElement, createTripCostTemplate(), `beforeend`);
 
-  render(siteHeaderElement, createTripMenuTemplate(), `beforeend`);
-  render(siteHeaderElement, createTripFilterTemplate(), `beforeend`);
+  const siteHeaderControlsElement = document.querySelector(`.trip-controls`);
+  const siteMainElement = document.querySelector(`.trip-events`);
+
+  render(siteHeaderControlsElement, createTripMenuTemplate(), `afterbegin`);
+  render(siteHeaderControlsElement, createTripFilterTemplate(), `afterbegin`);
 
   render(siteMainElement, createTripSortTemplate(), `afterbegin`);
   render(siteMainElement, createEditEventTemplate(), `beforeend`);
