@@ -2,13 +2,18 @@
 
 const DAYS_COUNT = 3;
 
+const siteHeaderElement = document.querySelector(`.trip-controls`);
+const siteMainElement = document.querySelector(`.trip-events`);
+
 const createTripInfoTemplate = () => {
   return (
-    `<div class="trip-info__main">
+    ` <section class="trip-main__trip-info trip-info">
+    <div class="trip-info__main">
     <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
 
     <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
-  </div>`
+  </div>
+  </section>`
   );
 };
 
@@ -558,23 +563,24 @@ const createTripDaysTemplate = () => {
   );
 };
 
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
+const init = () => {
+
+  const render = (container, template, place) => {
+    container.insertAdjacentHTML(place, template);
+  };
+
+  render(siteHeaderElement, createTripInfoTemplate(), `beforebegin`);
+  render(siteHeaderElement, createTripCostTemplate(), `beforeend`);
+
+  render(siteHeaderElement, createTripMenuTemplate(), `beforeend`);
+  render(siteHeaderElement, createTripFilterTemplate(), `beforeend`);
+
+  render(siteMainElement, createTripSortTemplate(), `afterbegin`);
+  render(siteMainElement, createEditEventTemplate(), `beforeend`);
+
+  for (let i = 0; i < DAYS_COUNT; i++) {
+    render(siteMainElement, createTripDaysTemplate(), `beforeend`);
+  }
 };
 
-const siteHeaderElement = document.querySelector(`.trip-controls`);
-
-render(siteHeaderElement, createTripInfoTemplate(), `beforebegin`);
-render(siteHeaderElement, createTripCostTemplate(), `beforebegin`);
-
-render(siteHeaderElement, createTripMenuTemplate(), `beforeend`);
-render(siteHeaderElement, createTripFilterTemplate(), `beforeend`);
-
-const siteMainElement = document.querySelector(`.trip-events`);
-
-render(siteMainElement, createTripSortTemplate(), `afterbegin`);
-render(siteMainElement, createEditEventTemplate(), `beforeend`);
-
-for (let i = 0; i < DAYS_COUNT; i++) {
-  render(siteMainElement, createTripDaysTemplate(), `beforeend`);
-}
+init();
