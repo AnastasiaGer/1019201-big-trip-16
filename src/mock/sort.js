@@ -1,4 +1,4 @@
-export const sortOptions = [
+export const SORT_OPTION = [
   {
     name: `event`,
     isChecked: true

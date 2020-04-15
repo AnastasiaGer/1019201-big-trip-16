@@ -1,7 +1,7 @@
 import {formatDate, formatTime, getDuration} from "../utils.js";
 
-const getServices = (arr) => {
-  return arr.map((service) => {
+const getServices = (services) => {
+  return services.map((service) => {
     return (`
         <li class="event__offer">
           <span class="event__offer-title">${service.title}</span>
@@ -12,7 +12,7 @@ const getServices = (arr) => {
   }).join(``);
 };
 
-export const createTripDaysTemplate = (cardData) => {
+export const createTripEventTemplate = (cardData) => {
 
   const {type, price, city, start, end, services} = cardData;
   const startDate = formatDate(new Date(start), true);

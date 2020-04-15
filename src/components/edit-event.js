@@ -1,8 +1,8 @@
 import {formatDate, formatTime} from "../utils.js";
-import {cities, types} from "../mock/event.js";
+import {CITIES, TYPES} from "../mock/event.js";
 
-const getTypeTransport = (arr) => {
-  return arr.map((typeTransport) => {
+const getTypeTransport = (typesTransport) => {
+  return typesTransport.map((typeTransport) => {
     return (`
       <div class="event__type-item">
          <input id="event-type-${typeTransport.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeTransport.toLowerCase()}">
@@ -12,8 +12,8 @@ const getTypeTransport = (arr) => {
   }).join(``);
 };
 
-const getTypeActivity = (arr) => {
-  return arr.map((activity) => {
+const getTypeActivity = (activities) => {
+  return activities.map((activity) => {
     return (`
       <div class="event__type-item">
         <input id="event-type-${activity.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${activity.toLowerCase()}">
@@ -23,8 +23,8 @@ const getTypeActivity = (arr) => {
   }).join(``);
 };
 
-const getServices = (arr) => {
-  return arr.map((service) => {
+const getServices = (services) => {
+  return services.map((service) => {
     return (`
       <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${service.type}-1" type="checkbox" name="event-offer-${service.type}" checked>
@@ -38,14 +38,14 @@ const getServices = (arr) => {
   }).join(``);
 };
 
-const getPhotosList = (arr) => {
-  return arr.map((photo) => {
+const getPhotosList = (photos) => {
+  return photos.map((photo) => {
     return (`<img class="event__photo" src="${photo}" alt="Event photo">`);
   });
 };
 
-const getCities = (arr) => {
-  return arr.map((cityName) => {
+const getCities = (citiesName) => {
+  return citiesName.map((cityName) => {
     return (`<option value="${cityName}"></option>`);
   }).join(``);
 };
@@ -58,11 +58,11 @@ export const createEditEventTemplate = (cardData) => {
 
   const startTime = formatTime(new Date(start).getHours(), new Date(start).getMinutes());
   const endTime = formatTime(new Date(end).getHours(), new Date(end).getMinutes());
-  const typeTransport = getTypeTransport(types[0]);
-  const typeActivity = getTypeActivity(types[1]);
+  const typeTransport = getTypeTransport(TYPES[0]);
+  const typeActivity = getTypeActivity(TYPES[1]);
   const servicesList = getServices(services);
   const photosList = getPhotosList(photos);
-  const citiesList = getCities(cities);
+  const citiesList = getCities(CITIES);
 
   return (`
     <form class="event  event--edit" action="#" method="post">

@@ -1,10 +1,10 @@
-const filterNames = [
+const FILTER_NAMES = [
   `Everything`, `Future`, `Past`
 ];
 
 
 const generateFilters = () => {
-  return filterNames.map((it) => {
+  return FILTER_NAMES.map((it) => {
     return {
       name: it,
     };

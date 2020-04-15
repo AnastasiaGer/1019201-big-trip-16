@@ -1,5 +1,5 @@
 
-export const createDayInfoTemplate = (date, index) => {
+export const createDayNumberTemplate = (date, index) => {
 
   const currentDate = new Date(date);
   const currentYear = currentDate.getFullYear();

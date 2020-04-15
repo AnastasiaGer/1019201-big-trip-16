@@ -1,3 +1,5 @@
+const NUMBER_MINETS = 60;
+
 export const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
 
@@ -27,6 +29,7 @@ export const renderElement = (container, template, place) => {
     case `beforeend`:
       container.append(template);
       break;
+    default: return;
   }
 };
 
@@ -43,5 +46,5 @@ export const formatTime = (hours, minutes) => {
 };
 
 export const getDuration = (time) => {
-  return time.getHours() * 60 + time.getMinutes();
+  return time.getHours() * NUMBER_MINETS + time.getMinutes();
 };

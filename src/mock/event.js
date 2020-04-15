@@ -3,8 +3,12 @@
 import {getRandomArrayItem, getRandomIntegerNumber} from "../utils.js";
 
 const EVENTS_AMOUNT = 20;
+const NUMBER_WEEK_DAYS = 7;
+const NUMBER_HOURS = 24;
+const TIME_FORMAT = 1000;
+const NUMBER_MINETS = 60;
 
-export const types = [
+export const TYPES = [
   [
     `Taxi`,
     `Bus`,
@@ -21,7 +25,7 @@ export const types = [
   ]
 ];
 
-export const cities = [
+export const CITIES = [
   `Amsterdam`,
   `Geneva`,
   `Chamonix`,
@@ -29,7 +33,7 @@ export const cities = [
   `Moscow`,
 ];
 
-const services = [
+const SERVICES = [
   {
     type: `luggage`,
     title: `Add luggage`,
@@ -88,7 +92,7 @@ const getRandomServices = () => {
   const currentServices = [];
 
   for (let i = 0; i < getRandomIntegerNumber(0, 4); i++) {
-    currentServices.push(services[i]);
+    currentServices.push(SERVICES[i]);
   }
 
   return currentServices;
@@ -98,27 +102,27 @@ const getRandomDate = () => {
   return (
     Date.now() +
     1 +
-    Math.floor(Math.random() * 7) * 24 * getRandomIntegerNumber(0, 60) * 60 * 1000
+    Math.floor(Math.random() * NUMBER_WEEK_DAYS) * NUMBER_HOURS * getRandomIntegerNumber(0, NUMBER_MINETS) * NUMBER_MINETS * TIME_FORMAT
   );
 };
 
 const getRouteTypesArray = () => {
-  const routeTransportsArray = types[0];
-  const routeActivitiesArray = types[1];
+  const routeTransportsArray = TYPES[0];
+  const routeActivitiesArray = TYPES[1];
   const routeTypesArray = routeTransportsArray.concat(routeActivitiesArray);
 
   return routeTypesArray;
 };
 
 // Генерирует моки для event
-const generateCard = () => {
+const generateEvent = () => {
   const startDate = getRandomDate();
   const endDate = getRandomDate();
 
   // Сформирует поля моков event
   return {
     type: getRandomArrayItem(getRouteTypesArray()),
-    city: getRandomArrayItem(cities),
+    city: getRandomArrayItem(CITIES),
     photos: getRandomPhotos(),
     description: getRandomDescription(),
     services: getRandomServices(),
@@ -128,16 +132,16 @@ const generateCard = () => {
   };
 };
 
-const generateCards = (count) => {
+const generateEvents = (count) => {
   return new Array(count)
     .fill(``)
-    .map(() => generateCard())
+    .map(() => generateEvent())
     .sort(
         (current, next) => current.start - next.start
     );
 };
 
-export const cardsList = generateCards(EVENTS_AMOUNT);
+export const cardsList = generateEvents(EVENTS_AMOUNT);
 
 export const datesList = [
   ...new Set(cardsList.map((elem) => new Date(elem.start).toDateString()))

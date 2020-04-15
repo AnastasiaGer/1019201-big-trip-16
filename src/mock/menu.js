@@ -1,1 +1,1 @@
-export const menuNames = [`Table`, `Stats`];
+export const MENU_NAMES = [`Table`, `Stats`];
