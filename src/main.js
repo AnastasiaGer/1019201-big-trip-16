@@ -12,34 +12,32 @@ import {createDayNumberTemplate} from "./components/day-number.js";
 import {createElement, render, renderElement} from "./utils.js";
 import {generateFilters} from "./mock/filter.js";
 import {cardsList, datesList} from "./mock/event.js";
-import {SORT_OPTION} from "./mock/sort.js";
+import {SORT_OPTIONS} from "./mock/sort.js";
 import {MENU_NAMES} from "./mock/menu.js";
 
 const siteHeaderControlsElement = document.querySelector(`.trip-controls`);
 const siteMainElement = document.querySelector(`.trip-events`);
 
+const renderTripDays = () => {
+  datesList.forEach((date, dateIndex) => {
+    const day = createElement(createDayNumberTemplate(date, dateIndex + 1));
+    const tripDaysList = document.querySelector(`.trip-days`);
+    cardsList
+      .filter((card) => new Date(card.start).toDateString() === date)
+      .forEach((card) => {
+        render(day.querySelector(`.trip-events__list`), createTripEventTemplate(card));
+      });
+
+    renderElement(tripDaysList, day, `beforeend`);
+  });
+};
+
 const init = () => {
   render(siteHeaderControlsElement, createTripMenuTemplate(MENU_NAMES), `afterbegin`);
   const filters = generateFilters();
   render(siteHeaderControlsElement, createTripFilterTemplate(filters));
-  render(siteMainElement, createTripSortTemplate(SORT_OPTION));
+  render(siteMainElement, createTripSortTemplate(SORT_OPTIONS));
   render(siteMainElement, createDaysListTemplate());
-
-  const tripDaysList = document.querySelector(`.trip-days`);
-
-  const renderTripDays = () => {
-    datesList.forEach((date, dateIndex) => {
-      const day = createElement(createDayNumberTemplate(date, dateIndex + 1));
-
-      cardsList
-        .filter((card) => new Date(card.start).toDateString() === date)
-        .forEach((card) => {
-          render(day.querySelector(`.trip-events__list`), createTripEventTemplate(card));
-        });
-
-      renderElement(tripDaysList, day, `beforeend`);
-    });
-  };
 
   renderTripDays();
 

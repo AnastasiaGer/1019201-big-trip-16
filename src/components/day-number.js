@@ -1,5 +1,5 @@
 
-export const createDayNumberTemplate = (date, index) => {
+export const createDayNumberTemplate = (date, dayNumber) => {
 
   const currentDate = new Date(date);
   const currentYear = currentDate.getFullYear();
@@ -8,7 +8,7 @@ export const createDayNumberTemplate = (date, index) => {
 
   return (`<li class="trip-days__item  day">
            <div class="day__info">
-            <span class="day__counter">${index}</span>
+            <span class="day__counter">${dayNumber}</span>
             <time class="day__date" datetime="${currentYear}-${currentMonth + 1}-${currentDay}">${date.slice(4, 7).toUpperCase()}&nbsp;${currentDay}</time>
           </div>
           <ul class="trip-events__list"></ul>
