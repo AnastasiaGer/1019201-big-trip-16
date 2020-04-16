@@ -56,7 +56,7 @@ const SERVICES = [
   }
 ];
 
-const Descriptions = [
+const DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
   `Fusce tristique felis at fermentum pharetra.`,
@@ -81,7 +81,7 @@ const getRandomPhotos = () => {
 };
 
 const getRandomDescription = () => {
-  return Descriptions
+  return DESCRIPTIONS
     .filter(() => Math.random() > 0.5)
     .slice(0, getRandomIntegerNumber(1, 3))
     .join(` `)
