@@ -1,8 +1,8 @@
 import {createElement} from "../utils.js";
 
 const createTripSortTemplate = (options) => {
-  return (`
-    <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+  return (
+    `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <span class="trip-sort__item  trip-sort__item--day"></span>
     ${options.map(({name, isChecked}) => {
       return (`
@@ -13,11 +13,11 @@ const createTripSortTemplate = (options) => {
       `);
     }).join(``)}
       <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
-    </form>
-  `);
+    </form>`
+  );
 };
 
-export default class Sort {
+export default class Sorting {
   constructor(options) {
     this._options = options;
     this._element = null;

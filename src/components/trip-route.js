@@ -14,12 +14,12 @@ const getTripDates = (dates) => {
 };
 
 const createTripRouteTemplate = (cities, dates) => {
-  return (`
-    <div class="trip-info__main">
+  return (
+    `<div class="trip-info__main">
       <h1 class="trip-info__title">${getCitiesRout(cities)}</h1>
       <p class="trip-info__dates">${getTripDates(dates)}</p>
-    </div>
-  `);
+    </div>`
+  );
 };
 
 

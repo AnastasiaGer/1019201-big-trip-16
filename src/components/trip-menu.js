@@ -1,19 +1,19 @@
 import {createElement} from "../utils.js";
 
 const createTripMenuTemplate = (names) => {
-  return (`
+  return (
+    `<nav class="trip-controls__trip-tabs  trip-tabs">
     <h2 class="visually-hidden">Switch trip view</h2>
-    <nav class="trip-controls__trip-tabs  trip-tabs">
     ${names.map((name) => {
       return (`
       <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">${name}</a>
     `);
     }).join(``)}
-    </nav>
-  `);
+    </nav>`
+  );
 };
 
-export default class Menu {
+export default class SiteMenu {
   constructor(names) {
     this._names = names;
     this._element = null;

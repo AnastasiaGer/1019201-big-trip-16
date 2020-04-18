@@ -1,10 +1,8 @@
+
 import {createElement} from "../utils.js";
 
 const createDaysListTemplate = () => {
-  return (`
-    <ul class="trip-days">
-    </ul>
-  `);
+  return (`<ul class="trip-days"></ul>`);
 };
 
 export default class DaysList {

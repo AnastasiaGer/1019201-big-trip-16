@@ -1,16 +1,5 @@
-const FILTER_NAMES = [
-  `Everything`, `Future`, `Past`
+export const filters = [
+  `everything`,
+  `future`,
+  `past`
 ];
-
-
-const generateFilters = () => {
-  return FILTER_NAMES.map((it) => {
-    return {
-      name: it,
-    };
-  });
-};
-
-
-export {generateFilters};
-

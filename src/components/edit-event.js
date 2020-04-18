@@ -64,8 +64,8 @@ const createEditEventTemplate = (cardData) => {
   const photosList = getPhotosList(photos);
   const citiesList = getCities(CITIES);
 
-  return (`
-    <form class="event  event--edit" action="#" method="post">
+  return (
+    `<form class="event  event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -113,6 +113,9 @@ const createEditEventTemplate = (cardData) => {
         </div>
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
+        <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
@@ -131,8 +134,8 @@ const createEditEventTemplate = (cardData) => {
           </div>
         </section>
       </section>
-    </form>
-  `);
+    </form>`
+  );
 };
 
 export default class EditEvent {

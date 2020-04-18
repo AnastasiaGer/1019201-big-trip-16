@@ -1,22 +1,20 @@
 import {createElement} from "../utils.js";
 
-const createFilterMarkup = (filter, isChecked) => {
-  const {name} = filter;
+const createFilterTemplate = (names) => {
   return (
-    `<div class="trip-filters__filter">
-    <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" ${isChecked ? `checked` : ``}/>
-    <label class="trip-filters__filter-label" for="filter-${name}">${name}</label>
-  </div>`
+    `<form class="trip-filters" action="#" method="get">
+    ${names.map((name) => {
+      return (`
+        <div class="trip-filters__filter">
+          <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" checked>
+          <label class="trip-filters__filter-label" for="filter-${name}">${name}</label>
+        </div>
+      `);
+    }).join(``)
+    }
+      <button class="visually-hidden" type="submit">Accept filter</button>
+    </form>`
   );
-};
-
-const createTripFilterTemplate = (filters) => {
-  const filtersMarkup = filters.map((it, i) => createFilterMarkup(it, i === 0)).join(`\n`);
-
-  return `<form class="trip-filters" action="#" method="get">
-  ${filtersMarkup}
-    <button class="visually-hidden" type="submit">Accept filter</button>
-  </form>`;
 };
 
 export default class Filter {
@@ -26,7 +24,7 @@ export default class Filter {
   }
 
   getTemplate() {
-    return createTripFilterTemplate(this._filters);
+    return createFilterTemplate(this._filters);
   }
 
   getElement() {

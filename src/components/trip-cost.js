@@ -1,14 +1,14 @@
 import {createElement} from "../utils.js";
 
 const createTripCostTemplate = (cards) => {
-  return (`
-    <p class="trip-info__cost">
+  return (
+    `<p class="trip-info__cost">
       Total: &euro;&nbsp;<span class="trip-info__cost-value">${cards.map((card) => card.price).reduce((sum, current) => sum + current, 0)}</span>
-    </p>
-  `);
+    </p>`
+  );
 };
 
-export default class Cost {
+export default class TripCost {
   constructor(cards) {
     this._cards = cards;
     this._element = null;
