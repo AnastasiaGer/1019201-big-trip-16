@@ -1,4 +1,4 @@
-import {formatDate, formatTime} from "../utils.js";
+import {formatDate, formatTime, createElement} from "../utils.js";
 import {CITIES, TYPES} from "../mock/event.js";
 
 const getTypeTransport = (typesTransport) => {
@@ -50,7 +50,7 @@ const getCities = (citiesName) => {
   }).join(``);
 };
 
-export const createEditEventTemplate = (cardData) => {
+const createEditEventTemplate = (cardData) => {
 
   const {type, city, photos, description, services, start, end, price} = cardData;
   const startDate = formatDate(new Date(start), false);
@@ -134,3 +134,26 @@ export const createEditEventTemplate = (cardData) => {
     </form>
   `);
 };
+
+export default class EditEvent {
+  constructor(cardData) {
+    this._cardData = cardData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEditEventTemplate(this._cardData);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

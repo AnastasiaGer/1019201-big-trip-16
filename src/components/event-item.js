@@ -1,4 +1,4 @@
-import {formatDate, formatTime, getDuration} from "../utils.js";
+import {formatDate, formatTime, getDuration, createElement} from "../utils.js";
 
 const getServices = (services) => {
   return services.map((service) => {
@@ -12,7 +12,7 @@ const getServices = (services) => {
   }).join(``);
 };
 
-export const createTripEventTemplate = (cardData) => {
+const createEventItemTemplate = (cardData) => {
 
   const {type, price, city, start, end, services} = cardData;
   const startDate = formatDate(new Date(start), true);
@@ -52,3 +52,26 @@ export const createTripEventTemplate = (cardData) => {
     </li>
     `);
 };
+
+export default class EventItem {
+  constructor(cardData) {
+    this._cardData = cardData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventItemTemplate(this._cardData);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
