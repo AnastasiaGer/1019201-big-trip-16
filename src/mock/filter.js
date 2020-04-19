@@ -1,4 +1,4 @@
-export const filters = [
+export const FILTERS = [
   `everything`,
   `future`,
   `past`

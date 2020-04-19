@@ -1,4 +1,4 @@
-const NUMBER_MINUTES = 60;
+const MINUTES_PER_HOUR = 60;
 
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
@@ -46,5 +46,5 @@ export const formatTime = (hours, minutes) => {
 };
 
 export const getDuration = (time) => {
-  return time.getHours() * NUMBER_MINUTES + time.getMinutes();
+  return time.getHours() * MINUTES_PER_HOUR + time.getMinutes();
 };

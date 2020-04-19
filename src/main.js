@@ -9,7 +9,7 @@ import SiteMenu from "./components/trip-menu.js";
 import Sorting from "./components/trip-sort.js";
 import DaysList from "./components/trip-list.js";
 import DayNumber from "./components/day-number.js";
-import {filters} from "./mock/filter.js";
+import {FILTERS} from "./mock/filter.js";
 import {cardsList, datesList} from "./mock/event.js";
 import {SORT_OPTIONS} from "./mock/sort.js";
 import {MENU_NAMES} from "./mock/menu.js";
@@ -53,7 +53,7 @@ const renderTripDays = () => {
 
 const init = () => {
   renderElement(tripControls, new SiteMenu(MENU_NAMES).getElement(), RenderPosition.AFTERBEGIN);
-  renderElement(tripControls, new Filter(filters).getElement(), RenderPosition.BEFOREEND);
+  renderElement(tripControls, new Filter(FILTERS).getElement(), RenderPosition.BEFOREEND);
   renderElement(tripEvents, new Sorting(SORT_OPTIONS).getElement(), RenderPosition.BEFOREEND);
   renderElement(tripEvents, new DaysList().getElement(), RenderPosition.BEFOREEND);
   renderTripDays();

@@ -853,7 +853,7 @@ const renderTripDays = () => {
 
 const init = () => {
   Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["renderElement"])(tripControls, new _components_trip_menu_js__WEBPACK_IMPORTED_MODULE_7__["default"](_mock_menu_js__WEBPACK_IMPORTED_MODULE_14__["MENU_NAMES"]).getElement(), _utils_js__WEBPACK_IMPORTED_MODULE_0__["RenderPosition"].AFTERBEGIN);
-  Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["renderElement"])(tripControls, new _components_trip_filter_js__WEBPACK_IMPORTED_MODULE_5__["default"](_mock_filter_js__WEBPACK_IMPORTED_MODULE_11__["filters"]).getElement(), _utils_js__WEBPACK_IMPORTED_MODULE_0__["RenderPosition"].BEFOREEND);
+  Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["renderElement"])(tripControls, new _components_trip_filter_js__WEBPACK_IMPORTED_MODULE_5__["default"](_mock_filter_js__WEBPACK_IMPORTED_MODULE_11__["FILTERS"]).getElement(), _utils_js__WEBPACK_IMPORTED_MODULE_0__["RenderPosition"].BEFOREEND);
   Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["renderElement"])(tripEvents, new _components_trip_sort_js__WEBPACK_IMPORTED_MODULE_8__["default"](_mock_sort_js__WEBPACK_IMPORTED_MODULE_13__["SORT_OPTIONS"]).getElement(), _utils_js__WEBPACK_IMPORTED_MODULE_0__["RenderPosition"].BEFOREEND);
   Object(_utils_js__WEBPACK_IMPORTED_MODULE_0__["renderElement"])(tripEvents, new _components_trip_list_js__WEBPACK_IMPORTED_MODULE_9__["default"]().getElement(), _utils_js__WEBPACK_IMPORTED_MODULE_0__["RenderPosition"].BEFOREEND);
   renderTripDays();
@@ -1048,13 +1048,13 @@ const datesList = [
 /*!****************************!*\
   !*** ./src/mock/filter.js ***!
   \****************************/
-/*! exports provided: filters */
+/*! exports provided: FILTERS */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "filters", function() { return filters; });
-const filters = [
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FILTERS", function() { return FILTERS; });
+const FILTERS = [
   `everything`,
   `future`,
   `past`
@@ -1123,7 +1123,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDate", function() { return formatDate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatTime", function() { return formatTime; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDuration", function() { return getDuration; });
-const NUMBER_MINUTES = 60;
+const MINUTES_PER_HOUR = 60;
 
 const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
@@ -1171,7 +1171,7 @@ const formatTime = (hours, minutes) => {
 };
 
 const getDuration = (time) => {
-  return time.getHours() * NUMBER_MINUTES + time.getMinutes();
+  return time.getHours() * MINUTES_PER_HOUR + time.getMinutes();
 };
 
 
