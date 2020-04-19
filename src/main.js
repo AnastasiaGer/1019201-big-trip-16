@@ -84,8 +84,8 @@ const init = () => {
   } else {
     renderElement(tripEvents, new Sorting(SORT_OPTIONS).getElement(), RenderPosition.BEFOREEND);
     renderElement(tripEvents, new DaysList().getElement(), RenderPosition.BEFOREEND);
-    renderTripDays();
   }
+  renderTripDays();
   const citiesList = [
     ...new Set(cardsList.map((elem) => elem.city))
   ];
