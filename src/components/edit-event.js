@@ -1,4 +1,4 @@
-import {formatDate, formatTime} from "../utils.js";
+import {formatDate, formatTime, createElement} from "../utils.js";
 import {CITIES, TYPES} from "../mock/event.js";
 
 const getTypeTransport = (typesTransport) => {
@@ -50,7 +50,7 @@ const getCities = (citiesName) => {
   }).join(``);
 };
 
-export const createEditEventTemplate = (cardData) => {
+const createEditEventTemplate = (cardData) => {
 
   const {type, city, photos, description, services, start, end, price} = cardData;
   const startDate = formatDate(new Date(start), false);
@@ -64,8 +64,8 @@ export const createEditEventTemplate = (cardData) => {
   const photosList = getPhotosList(photos);
   const citiesList = getCities(CITIES);
 
-  return (`
-    <form class="event  event--edit" action="#" method="post">
+  return (
+    `<form class="event  event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -113,6 +113,9 @@ export const createEditEventTemplate = (cardData) => {
         </div>
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
+        <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
@@ -131,6 +134,29 @@ export const createEditEventTemplate = (cardData) => {
           </div>
         </section>
       </section>
-    </form>
-  `);
+    </form>`
+  );
 };
+
+export default class EditEvent {
+  constructor(cardData) {
+    this._cardData = cardData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEditEventTemplate(this._cardData);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
