@@ -32,12 +32,12 @@ const renderTripDays = () => {
 
         renderElement(eventList, newEvent, RenderPosition.BEFOREEND);
 
-        const editButton = newEvent.querySelector(`.event__rollup-btn`);
-        const editEventItem = new EditEvent(card).getElement();
-        const closeButton = editEventItem.querySelector(`.event__rollup-btn`);
-
         const replaceTaskToEdit = () => {
           eventList.replaceChild(editEventItem, newEvent);
+        };
+
+        const replaceEditToTask = () => {
+          eventList.replaceChild(newEvent, editEventItem);
         };
 
         const onEscKeyDown = (evt) => {
@@ -49,15 +49,15 @@ const renderTripDays = () => {
           }
         };
 
-        const replaceEditToTask = () => {
-          eventList.replaceChild(newEvent, editEventItem);
-        };
-
+        const editButton = newEvent.querySelector(`.event__rollup-btn`);
         editButton.addEventListener(`click`, () => {
           replaceTaskToEdit();
           document.addEventListener(`keydown`, onEscKeyDown);
         });
 
+        const editEventItem = new EditEvent(card).getElement();
+
+        const closeButton = editEventItem.querySelector(`.event__rollup-btn`);
         closeButton.addEventListener(`click`, (evt) => {
           evt.preventDefault();
           replaceEditToTask();
