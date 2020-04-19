@@ -6,7 +6,7 @@ const EVENTS_AMOUNT = 20;
 const NUMBER_WEEK_DAYS = 7;
 const NUMBER_HOURS = 24;
 const TIME_FORMAT = 1000;
-const NUMBER_MINETS = 60;
+const MINUTES_PER_HOUR = 60;
 
 export const TYPES = [
   [
@@ -102,7 +102,7 @@ const getRandomDate = () => {
   return (
     Date.now() +
     1 +
-    Math.floor(Math.random() * NUMBER_WEEK_DAYS) * NUMBER_HOURS * getRandomIntegerNumber(0, NUMBER_MINETS) * NUMBER_MINETS * TIME_FORMAT
+    Math.floor(Math.random() * NUMBER_WEEK_DAYS) * NUMBER_HOURS * getRandomIntegerNumber(0, MINUTES_PER_HOUR) * MINUTES_PER_HOUR * TIME_FORMAT
   );
 };
 
