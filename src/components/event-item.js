@@ -1,4 +1,5 @@
-import {formatDate, formatTime, getDuration, createElement} from "../utils.js";
+import {formatDate, formatTime, getDuration} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
 const getServices = (services) => {
   return services.map((service) => {
@@ -53,25 +54,15 @@ const createEventItemTemplate = (cardData) => {
   );
 };
 
-export default class EventItem {
+export default class EventItem extends AbstractComponent {
   constructor(cardData) {
+    super();
+
     this._cardData = cardData;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventItemTemplate(this._cardData);
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
+
