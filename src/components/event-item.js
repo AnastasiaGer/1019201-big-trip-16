@@ -1,4 +1,4 @@
-import {formatDate, formatTime, getDuration} from "../utils.js";
+import {formatDate, formatTime, getDuration} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const getServices = (services) => {

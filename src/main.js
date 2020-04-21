@@ -1,4 +1,4 @@
-import {renderElement, RenderPosition} from "./utils.js";
+import {renderElement, RenderPosition} from "./utils/render.js";
 import EditEvent from "./components/edit-event.js";
 import TripRoute from "./components/trip-route.js";
 import TripCost from "./components/trip-cost.js";

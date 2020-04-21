@@ -1,4 +1,4 @@
-import {formatDate, formatTime} from "../utils.js";
+import {formatDate, formatTime} from "../utils/common.js";
 import {CITIES, TYPES} from "../mock/event.js";
 import AbstractComponent from "./abstract-component.js";
 
