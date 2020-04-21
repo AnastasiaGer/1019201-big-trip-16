@@ -1,5 +1,6 @@
-import {formatDate, formatTime, createElement} from "../utils.js";
+import {formatDate, formatTime} from "../utils/common.js";
 import {CITIES, TYPES} from "../mock/event.js";
+import AbstractComponent from "./abstract-component.js";
 
 const getTypeTransport = (typesTransport) => {
   return typesTransport.map((typeTransport) => {
@@ -138,25 +139,22 @@ const createEditEventTemplate = (cardData) => {
   );
 };
 
-export default class EditEvent {
+export default class EditEvent extends AbstractComponent {
   constructor(cardData) {
+    super();
+
     this._cardData = cardData;
-    this._element = null;
   }
 
   getTemplate() {
     return createEditEventTemplate(this._cardData);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  setSubmitHandler(handler) {
+    this.getElement().addEventListener(`submit`, handler);
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 }

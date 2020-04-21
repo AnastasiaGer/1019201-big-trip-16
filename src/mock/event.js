@@ -1,6 +1,6 @@
 // Создаст пустые моки для events. Передаст event на вход функции генерации разметки точек
 
-import {getRandomArrayItem, getRandomIntegerNumber} from "../utils.js";
+import {getRandomArrayItem, getRandomIntegerNumber} from "../utils/common.js";
 
 const EVENTS_AMOUNT = 20;
 const NUMBER_WEEK_DAYS = 7;

@@ -1,104 +1,35 @@
-import {renderElement, RenderPosition} from "./utils.js";
-import EditEvent from "./components/edit-event.js";
+import {renderElement, RenderPosition} from "./utils/render.js";
+import {cardsList, datesList} from "./mock/event.js";
+import {MENU_NAMES} from "./mock/menu.js";
+import {FILTERS} from "./mock/filter.js";
+import SiteMenu from "./components/trip-menu.js";
+import Filter from "./components/trip-filter.js";
+import TripController from "./controllers/trip-controller.js";
+import TripInfo from "./components/trip-info.js";
 import TripRoute from "./components/trip-route.js";
 import TripCost from "./components/trip-cost.js";
-import EventItem from "./components/event-item.js";
-import Filter from "./components/trip-filter.js";
-import TripInfo from "./components/trip-info.js";
-import SiteMenu from "./components/trip-menu.js";
-import Sorting from "./components/trip-sort.js";
-import DaysList from "./components/trip-list.js";
-import DayNumber from "./components/day-number.js";
-import NoEvents from "./components/no-events.js";
-import {FILTERS} from "./mock/filter.js";
-import {cardsList, datesList} from "./mock/event.js";
-import {SORT_OPTIONS} from "./mock/sort.js";
-import {MENU_NAMES} from "./mock/menu.js";
 
+const citiesList = [
+  ...new Set(cardsList.map((elem) => elem.city))
+];
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 const tripEvents = document.querySelector(`.trip-events`);
-
-const renderTripDays = () => {
-  const tripDaysList = document.querySelector(`.trip-days`);
-
-  datesList.forEach((date, dateIndex) => {
-    const day = new DayNumber(date, dateIndex + 1).getElement();
-
-    cardsList
-    .filter((card) => new Date(card.start).toDateString() === date)
-      .forEach((card) => {
-        const newEvent = new EventItem(card).getElement();
-        const eventList = day.querySelector(`.trip-events__list`);
-
-        renderElement(eventList, newEvent, RenderPosition.BEFOREEND);
-
-        const replaceTaskToEdit = () => {
-          eventList.replaceChild(editEventItem, newEvent);
-        };
-
-        const replaceEditToTask = () => {
-          eventList.replaceChild(newEvent, editEventItem);
-        };
-
-        const onEscKeyDown = (evt) => {
-          const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-          if (isEscKey) {
-            replaceEditToTask();
-            document.removeEventListener(`keydown`, onEscKeyDown);
-          }
-        };
-
-        const editButton = newEvent.querySelector(`.event__rollup-btn`);
-        editButton.addEventListener(`click`, () => {
-          replaceTaskToEdit();
-          document.addEventListener(`keydown`, onEscKeyDown);
-        });
-
-        const editEventItem = new EditEvent(card).getElement();
-
-        const closeButton = editEventItem.querySelector(`.event__rollup-btn`);
-        closeButton.addEventListener(`click`, (evt) => {
-          evt.preventDefault();
-          replaceEditToTask();
-          document.removeEventListener(`keydown`, onEscKeyDown);
-        });
-
-        editEventItem.addEventListener(`submit`, (evt) => {
-          evt.preventDefault();
-          replaceEditToTask();
-          document.removeEventListener(`keydown`, onEscKeyDown);
-        });
-      });
-
-    renderElement(tripDaysList, day, RenderPosition.BEFOREEND);
-  });
-};
+const tripInfoBlock = document.querySelector(`.trip-main`);
 
 const init = () => {
-  renderElement(tripControls, new SiteMenu(MENU_NAMES).getElement(), RenderPosition.AFTERBEGIN);
-  renderElement(tripControls, new Filter(FILTERS).getElement(), RenderPosition.BEFOREEND);
+  renderElement(tripControls, new SiteMenu(MENU_NAMES), RenderPosition.AFTERBEGIN);
+  renderElement(tripControls, new Filter(FILTERS), RenderPosition.BEFOREEND);
 
-  if (cardsList.length === 0) {
-    renderElement(tripEvents, new NoEvents().getElement(), RenderPosition.AFTERBEGIN);
-  } else {
-    renderElement(tripEvents, new Sorting(SORT_OPTIONS).getElement(), RenderPosition.BEFOREEND);
-    renderElement(tripEvents, new DaysList().getElement(), RenderPosition.BEFOREEND);
-  }
-  renderTripDays();
-  const citiesList = [
-    ...new Set(cardsList.map((elem) => elem.city))
-  ];
+  const tripController = new TripController(tripEvents);
 
-  const tripInfoBlock = document.querySelector(`.trip-main`);
+  tripController.render(cardsList);
 
-  renderElement(tripInfoBlock, new TripInfo().getElement(), RenderPosition.AFTERBEGIN);
+  renderElement(tripInfoBlock, new TripInfo(), RenderPosition.AFTERBEGIN);
 
   const tripInfoRoute = tripInfoBlock.querySelector(`.trip-main__trip-info`);
 
-  renderElement(tripInfoRoute, new TripRoute(citiesList, datesList).getElement(), RenderPosition.BEFOREEND);
-  renderElement(tripInfoRoute, new TripCost(cardsList).getElement(), RenderPosition.BEFOREEND);
-
+  renderElement(tripInfoRoute, new TripRoute(citiesList, datesList), RenderPosition.BEFOREEND);
+  renderElement(tripInfoRoute, new TripCost(cardsList), RenderPosition.BEFOREEND);
 };
 
 init();
