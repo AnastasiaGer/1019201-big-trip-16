@@ -1,4 +1,4 @@
-import {renderElement, RenderPosition} from "./utils/render.js";
+import {renderElement, RenderPosition, replace} from "./utils/render.js";
 import EditEvent from "./components/edit-event.js";
 import TripRoute from "./components/trip-route.js";
 import TripCost from "./components/trip-cost.js";
@@ -33,11 +33,12 @@ const renderTripDays = () => {
         renderElement(eventList, newEvent, RenderPosition.BEFOREEND);
 
         const replaceTaskToEdit = () => {
-          eventList.replaceChild(editEventItem, newEvent);
+          replace(eventList, editEventItem, newEvent);
+
         };
 
         const replaceEditToTask = () => {
-          eventList.replaceChild(newEvent, editEventItem);
+          replace(eventList, newEvent, editEventItem);
         };
 
         const onEscKeyDown = (evt) => {
