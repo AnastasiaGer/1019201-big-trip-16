@@ -149,4 +149,12 @@ export default class EditEvent extends AbstractComponent {
   getTemplate() {
     return createEditEventTemplate(this._cardData);
   }
+
+  setSubmitHandler(handler) {
+    this.getElement().addEventListener(`submit`, handler);
+  }
+
+  setCloseHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+  }
 }

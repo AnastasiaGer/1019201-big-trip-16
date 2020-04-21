@@ -59,10 +59,14 @@ export default class EventItem extends AbstractComponent {
     super();
 
     this._cardData = cardData;
+    this._element = null;
   }
 
   getTemplate() {
     return createEventItemTemplate(this._cardData);
   }
-}
 
+  setClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+  }
+}
