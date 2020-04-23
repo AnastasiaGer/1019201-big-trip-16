@@ -1,100 +1,128 @@
-import {renderElement, RenderPosition, replace} from "../utils/render.js";
-import Sorting, {SortType} from "../components/trip-sort.js";
+import {
+  renderElement,
+  RenderPosition,
+  replace,
+  remove
+} from "../utils/render.js";
+import Sorting, {
+  SortType
+} from "../components/trip-sort.js";
 import DaysList from "../components/trip-list.js";
 import DayNumber from "../components/day-number.js";
 import EventItem from "../components/event-item.js";
 import EditEvent from "../components/edit-event.js";
 import NoEvents from "../components/no-events.js";
-import {SORT_OPTIONS} from "../mock/sort.js";
-import {getDuration} from "../utils/common.js";
+import {
+  SORT_OPTIONS
+} from "../mock/sort.js";
 
-const renderTripEvents = (cards, container, isDefaultSorting = true) => {
-  const dates = isDefaultSorting
-    ? [...new Set(cards.map((elem) => new Date(elem.start).toDateString()))]
-    : [true];
+const SHOWING_EVENTS_COUNT = 20;
+const getSortedEvents = (events, sortType, from, to) => {
+  let sortedEvents = [];
+  const showingEvents = events.slice();
 
-  dates.forEach((date, dateIndex) => {
-    const day = isDefaultSorting
-      ? new DayNumber(date, dateIndex + 1)
-      : new DayNumber();
+  switch (sortType) {
+    case SortType.TIME:
+      sortedEvents = showingEvents.sort((a, b) => b.time - a.time);
+      break;
+    case SortType.PRICE:
+      sortedEvents = showingEvents.sort((a, b) => b.price - a.price);
+      break;
+    case SortType.EVENT:
+      sortedEvents = showingEvents;
+      break;
+  }
 
-    const dayElement = day.getElement();
+  return sortedEvents.slice(from, to);
+};
 
-    cards.filter((_card) => {
-      return isDefaultSorting ? new Date(_card.start).toDateString() === date : _card;
-    }).forEach((_card) => {
-      const newEvent = new EventItem(_card);
-      const editEvent = new EditEvent(_card);
-      const onEscKeyDown = (evt) => {
-        const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-        if (isEscKey) {
-          replaceEditToTask();
-          document.removeEventListener(`keydown`, onEscKeyDown);
-        }
-      };
+const renderTripDay = (container, events, date, index) => {
+  const tripDay = new DayNumber(index + 1, date);
+  const tripDayElement = tripDay.getElement();
 
-      const eventsList = dayElement.querySelector(`.trip-events__list`);
-      const replaceTaskToEdit = () => {
-        replace(editEvent, newEvent);
-      };
+  events.forEach((_card) => {
+    const eventListElement = tripDayElement.querySelector(`.trip-events__list`);
+    const replaceEventToEdit = () => {
+      replace(editEventComponent, eventComponent);
+    };
 
-      const replaceEditToTask = () => {
-        replace(newEvent, editEvent);
-      };
+    const replaceEditToEvent = () => {
+      replace(eventComponent, editEventComponent);
+    };
 
-      newEvent.setClickHandler(() => {
-        replaceTaskToEdit();
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+    const onEscKeyDown = (evt) => {
+      const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
-      editEvent.setSubmitHandler(replaceEditToTask);
-      editEvent.setCloseHandler(replaceEditToTask);
+      if (isEscKey) {
+        replaceEditToEvent();
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      }
+    };
 
-      renderElement(eventsList, newEvent, RenderPosition.BEFOREEND);
+    const eventComponent = new EventItem(_card);
+
+    eventComponent.setClickHandler(() => {
+      replaceEventToEdit();
+      document.addEventListener(`keydown`, onEscKeyDown);
     });
 
-    renderElement(container.getElement(), day, RenderPosition.BEFOREEND);
+    const editEventComponent = new EditEvent(_card);
+
+    editEventComponent.setSubmitHandler(replaceEditToEvent);
+    editEventComponent.setCloseHandler(replaceEditToEvent);
+
+    renderElement(eventListElement, eventComponent, RenderPosition.BEFOREEND);
+  });
+  renderElement(container, tripDay, RenderPosition.BEFOREEND);
+};
+
+
+const renderEventsList = (container, events, eventsDates) => {
+  eventsDates.forEach((item, index) => {
+    const dayEvents = events.filter((event) => {
+      return item === new Date(event.startDate).toDateString();
+    });
+    renderTripDay(container, dayEvents, item, index);
   });
 };
 
 export default class TripController {
-  constructor(container) {
-    this._container = container;
+  constructor() {
 
-    this._noTasksComponent = new NoEvents();
     this._sortComponent = new Sorting(SORT_OPTIONS);
+    this._noEventsComponent = new NoEvents();
     this._daysContainer = new DaysList();
   }
 
-  render(cards) {
-    const container = this._container;
+  render(events) {
+    const dates = [...new Set(events.map((item) => new Date(item.startDate).toDateString()))].sort((a, b) => {
+      return new Date(a).getDate() - new Date(b).getDate();
+    });
 
-    if (cards.length === 0) {
-      renderElement(container, this._noTasksComponent, RenderPosition.BEFOREEND);
-    } else {
-      renderElement(container, this._sortComponent, RenderPosition.AFTERBEGIN);
-      renderElement(container, this._daysContainer, RenderPosition.BEFOREEND);
-      renderTripEvents(cards, this._daysContainer);
+    const tripEventsElement = document.querySelector(`.trip-events`);
+    renderElement(tripEventsElement, this._sortComponent, RenderPosition.BEFOREEND);
+    renderElement(tripEventsElement, this._daysContainer, RenderPosition.BEFOREEND);
 
-      this._sortComponent.setSortTypeChangeHandler((sortType) => {
-        let sortedTasks = [];
+    const dayList = tripEventsElement.querySelector(`.trip-days`);
 
-        switch (sortType) {
-          case SortType.EVENT:
-            sortedTasks = cards.slice();
-            break;
-          case SortType.PRICE:
-            sortedTasks = cards.slice().sort((a, b) => b.price - a.price);
-            break;
-          case SortType.TIME:
-            sortedTasks = cards.slice().sort((a, b) => getDuration(b.end - b.start) - getDuration(a.end - a.start));
-            break;
-        }
+    if (events.length === 0) {
+      remove(this._sortComponent);
+      renderElement(dayList, this._noEventsComponent, RenderPosition.BEFOREEND);
 
-        this._daysContainer.getElement().innerHTML = ``;
-        renderTripEvents(sortedTasks, this._daysContainer);
-      });
+      return;
     }
+
+    renderEventsList(dayList, events, dates);
+
+
+    this._sortComponent.setSortTypeChangeHandler((sortType) => {
+      const showingEventsCount = SHOWING_EVENTS_COUNT;
+
+      const sortedEvents = getSortedEvents(events, sortType, 0, showingEventsCount);
+
+      dayList.innerHTML = ``;
+
+      renderTripDay(dayList, sortedEvents);
+    });
   }
 }
-

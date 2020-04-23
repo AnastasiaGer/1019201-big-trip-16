@@ -1,36 +1,28 @@
 import AbstractComponent from "./abstract-component.js";
 
-const createCardTemplate = (date, index) => {
-
-  let dayInfo = ``;
-
-  if (date && index) {
-    const currentDate = new Date(date);
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-    const currentDay = currentDate.getDate();
-
-    dayInfo = `<span class="day__counter">${index}</span>
-    <time class="day__date" datetime="${currentYear}-${currentMonth + 1}-${currentDay}">${date.slice(4, 7).toUpperCase()}&nbsp;${currentDay}</time>`;
-  }
+const createCardTemplate = (day, index) => {
 
   return (
     `<li class="trip-days__item  day">
-       <div class="day__info">${dayInfo}</div>
-      <ul class="trip-events__list"></ul>
+      <div class="day__info">
+        <span class="day__counter">${index || ``}</span>
+        <time class="day__date" datetime="${day && new Date(day).toLocaleDateString() || ``}">${day && new Date(day).toLocaleString(`default`, {month: `long`}) || ``} ${day && new Date(day).getDate() || ``}</time>
+      </div>
+      <ul class="trip-events__list">
+      </ul>
     </li>`
   );
 };
 
 export default class DayNumber extends AbstractComponent {
-  constructor(date, index) {
+  constructor(day, index) {
     super();
 
-    this._date = date;
+    this._day = day;
     this._index = index;
   }
 
   getTemplate() {
-    return createCardTemplate(this._date, this._index);
+    return createCardTemplate(this._day, this._index);
   }
 }
