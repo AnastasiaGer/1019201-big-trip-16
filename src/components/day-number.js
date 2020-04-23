@@ -20,6 +20,7 @@ export default class DayNumber extends AbstractComponent {
 
     this._day = day;
     this._index = index;
+    this._element = null;
   }
 
   getTemplate() {

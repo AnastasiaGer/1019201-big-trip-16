@@ -32,18 +32,19 @@ const createSortTemplate = (sortType) => {
 };
 
 export default class Sorting extends AbstractComponent {
-  constructor(sortType) {
+  constructor() {
     super();
 
-    this._currentSortType = sortType;
+    this._currenSortType = SortType.EVENT;
   }
   getTemplate() {
     return createSortTemplate(this._currentSortType);
   }
 
   getSortType() {
-    return this._currentSortType;
+    return this._currenSortType;
   }
+
   setSortTypeChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
@@ -59,8 +60,12 @@ export default class Sorting extends AbstractComponent {
       }
 
       this._currentSortType = sortType;
-
+      this.refreshElement();
       handler(this._currentSortType);
     });
+  }
+  refreshElement() {
+    this._element.innerHTML = ``;
+    this._element.innerHTML = this.getTemplate();
   }
 }

@@ -1,22 +1,13 @@
-import {
-  renderElement,
-  RenderPosition,
-  replace,
-  remove
-} from "../utils/render.js";
-import Sorting, {
-  SortType
-} from "../components/trip-sort.js";
+import {renderElement, RenderPosition, replace, remove} from "../utils/render.js";
+import Sorting, {SortType} from "../components/trip-sort.js";
 import DaysList from "../components/trip-list.js";
 import DayNumber from "../components/day-number.js";
 import EventItem from "../components/event-item.js";
 import EditEvent from "../components/edit-event.js";
 import NoEvents from "../components/no-events.js";
-import {
-  SORT_OPTIONS
-} from "../mock/sort.js";
+import {SORT_OPTIONS} from "../mock/sort.js";
+import {EVENTS_AMOUNT} from "../mock/event.js";
 
-const SHOWING_EVENTS_COUNT = 20;
 const getSortedEvents = (events, sortType, from, to) => {
   let sortedEvents = [];
   const showingEvents = events.slice();
@@ -37,41 +28,38 @@ const getSortedEvents = (events, sortType, from, to) => {
 };
 
 const renderTripDay = (container, events, date, index) => {
-  const tripDay = new DayNumber(index + 1, date);
+  const tripDay = new DayNumber(date, index + 1);
   const tripDayElement = tripDay.getElement();
 
   events.forEach((_card) => {
-    const eventListElement = tripDayElement.querySelector(`.trip-events__list`);
-    const replaceEventToEdit = () => {
-      replace(editEventComponent, eventComponent);
-    };
-
-    const replaceEditToEvent = () => {
-      replace(eventComponent, editEventComponent);
-    };
-
+    const newEvent = new EventItem(_card);
+    const editEvent = new EditEvent(_card);
     const onEscKeyDown = (evt) => {
       const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
       if (isEscKey) {
-        replaceEditToEvent();
+        replaceEditToTask();
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
 
-    const eventComponent = new EventItem(_card);
+    const eventsList = tripDayElement.querySelector(`.trip-events__list`);
+    const replaceTaskToEdit = () => {
+      replace(editEvent, newEvent);
+    };
 
-    eventComponent.setClickHandler(() => {
-      replaceEventToEdit();
+    const replaceEditToTask = () => {
+      replace(newEvent, editEvent);
+    };
+
+    newEvent.setClickHandler(() => {
+      replaceTaskToEdit();
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
-    const editEventComponent = new EditEvent(_card);
+    editEvent.setSubmitHandler(replaceEditToTask);
+    editEvent.setCloseHandler(replaceEditToTask);
 
-    editEventComponent.setSubmitHandler(replaceEditToEvent);
-    editEventComponent.setCloseHandler(replaceEditToEvent);
-
-    renderElement(eventListElement, eventComponent, RenderPosition.BEFOREEND);
+    renderElement(eventsList, newEvent, RenderPosition.BEFOREEND);
   });
   renderElement(container, tripDay, RenderPosition.BEFOREEND);
 };
@@ -116,7 +104,7 @@ export default class TripController {
 
 
     this._sortComponent.setSortTypeChangeHandler((sortType) => {
-      const showingEventsCount = SHOWING_EVENTS_COUNT;
+      const showingEventsCount = EVENTS_AMOUNT;
 
       const sortedEvents = getSortedEvents(events, sortType, 0, showingEventsCount);
 

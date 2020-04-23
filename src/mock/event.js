@@ -2,7 +2,7 @@
 
 import {getRandomArrayItem, getRandomIntegerNumber} from "../utils/common.js";
 
-const EVENTS_AMOUNT = 20;
+export const EVENTS_AMOUNT = 20;
 const NUMBER_WEEK_DAYS = 7;
 const NUMBER_HOURS = 24;
 const TIME_FORMAT = 1000;
