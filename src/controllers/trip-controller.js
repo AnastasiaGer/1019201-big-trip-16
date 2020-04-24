@@ -27,8 +27,8 @@ const getSortedEvents = (events, sortType, from, to) => {
   return sortedEvents.slice(from, to);
 };
 
-const renderTripDay = (container, events, date, index) => {
-  const tripDay = new DayNumber(date, index + 1);
+const renderTripDay = (container, events, day, index) => {
+  const tripDay = new DayNumber(day, index + 1);
   const tripDayElement = tripDay.getElement();
 
   events.forEach((_card) => {
@@ -66,11 +66,11 @@ const renderTripDay = (container, events, date, index) => {
 
 
 const renderEventsList = (container, events, eventsDates) => {
-  eventsDates.forEach((item, index) => {
+  eventsDates.forEach((day, index) => {
     const dayEvents = events.filter((event) => {
-      return item === new Date(event.startDate).toDateString();
+      return day === new Date(event.start).toDateString();
     });
-    renderTripDay(container, dayEvents, item, index);
+    renderTripDay(container, dayEvents, day, index);
   });
 };
 
@@ -83,7 +83,7 @@ export default class TripController {
   }
 
   render(events) {
-    const dates = [...new Set(events.map((item) => new Date(item.startDate).toDateString()))].sort((a, b) => {
+    const dates = [...new Set(events.map((item) => new Date(item.start).toDateString()))].sort((a, b) => {
       return new Date(a).getDate() - new Date(b).getDate();
     });
 
