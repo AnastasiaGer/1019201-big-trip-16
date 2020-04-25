@@ -110,7 +110,12 @@ export default class TripController {
 
       dayList.innerHTML = ``;
 
-      renderTripDay(dayList, sortedEvents);
+      if (sortType === SortType.EVENT) {
+        renderEventsList(dayList, events, dates);
+      } else {
+        renderTripDay(dayList, sortedEvents);
+      }
+
     });
   }
 }
