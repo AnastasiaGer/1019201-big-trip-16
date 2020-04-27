@@ -22,6 +22,20 @@ export const formatTime = (hours, minutes) => {
   return `${hours}:${(`0` + minutes).slice(-2)}`;
 };
 
-export const getDuration = (time) => {
-  return time.getHours() * MINUTES_PER_HOUR + time.getMinutes();
+const millisecondsToHours = (timeInMs) => Math.floor((timeInMs / (1000 * MINUTES_PER_HOUR * MINUTES_PER_HOUR)) % 24);
+
+const millisecondsToMinutes = (timeInMs) => Math.floor((timeInMs / (1000 * MINUTES_PER_HOUR)) % MINUTES_PER_HOUR);
+
+export const millisecondsToHm = (timeInMs) => {
+  const hours = millisecondsToHours(timeInMs);
+  const minutes = millisecondsToMinutes(timeInMs);
+
+  return `${hours}H ${minutes}M`;
+};
+
+export const getDuration = (dif) => {
+  const difInHours = Number(millisecondsToHours(dif));
+  const difInMinutes = Number(millisecondsToMinutes(dif));
+
+  return difInHours * MINUTES_PER_HOUR + difInMinutes;
 };
