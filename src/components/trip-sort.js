@@ -55,17 +55,13 @@ export default class Sorting extends AbstractComponent {
 
       const sortType = evt.target.dataset.sortType;
 
-      if (this._currentSortType === sortType) {
+      if (this._currenSortType === sortType) {
         return;
       }
 
-      this._currentSortType = sortType;
-      this.refreshElement();
-      handler(this._currentSortType);
+      this._currenSortType = sortType;
+
+      handler(this._currenSortType);
     });
-  }
-  refreshElement() {
-    this._element.innerHTML = ``;
-    this._element.innerHTML = this.getTemplate();
   }
 }
