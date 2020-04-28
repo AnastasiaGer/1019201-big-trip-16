@@ -5,7 +5,7 @@ import DayNumber from "../components/day-number.js";
 import NoEvents from "../components/no-events.js";
 import {SORT_OPTIONS} from "../mock/sort.js";
 import {EVENTS_AMOUNT} from "../mock/event.js";
-import PointController from "./point.js";
+import PointController from "./point-controller.js";
 
 
 const getSortedEvents = (events, sortType, from, to) => {
@@ -36,27 +36,27 @@ const renderEvents = (container, events, onDataChange, onViewChange) => {
   });
 };
 
-const renderTripDay = (container, events, date, index, onDataChange, onViewChange) => {
-  const tripDay = new DayNumber(index + 1, date);
+const renderTripDay = (container, events, day, index, onDataChange, onViewChange) => {
+  const tripDay = new DayNumber(index + 1, day);
   const tripDayElement = tripDay.getElement();
-  const eventListElement = tripDayElement.querySelector(`.trip-events__list`);
+  const eventsList = tripDayElement.querySelector(`.trip-events__list`);
 
-  const pointController = renderEvents(eventListElement, events, onDataChange, onViewChange);
+  const pointController = renderEvents(eventsList, events, onDataChange, onViewChange);
 
   render(container, tripDay, RenderPosition.BEFOREEND);
 
   return pointController;
 };
 
-const renderEventsList = (container, events, dates, onDataChange, onViewChange) => {
+const renderEventsList = (container, events, eventsDates, onDataChange, onViewChange) => {
   let points = [];
 
-  dates.forEach((item, index) => {
+  eventsDates.forEach((day, index) => {
     const dayEvents = events.filter((event) => {
-      return item === new Date(event.start).toDateString();
+      return day === new Date(event.start).toDateString();
     });
 
-    points = points.concat(renderTripDay(container, dayEvents, item, index, onDataChange, onViewChange));
+    points = points.concat(renderTripDay(container, dayEvents, day, index, onDataChange, onViewChange));
   });
 
   return points;
@@ -95,7 +95,6 @@ export default class TripController {
 
     if (this._events.length === 0) {
       remove(this._tripSortComponent);
-      remove(this._addNewEventComponent);
       render(dayList, this._noEventsComponent, RenderPosition.BEFOREEND);
 
       return;
