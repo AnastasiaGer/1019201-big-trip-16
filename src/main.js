@@ -1,4 +1,4 @@
-import {renderElement, RenderPosition} from "./utils/render.js";
+import {render, RenderPosition} from "./utils/render.js";
 import {cardsList, datesList} from "./mock/event.js";
 import {MENU_NAMES} from "./mock/menu.js";
 import {FILTERS} from "./mock/filter.js";
@@ -17,19 +17,19 @@ const tripEvents = document.querySelector(`.trip-events`);
 const tripInfoBlock = document.querySelector(`.trip-main`);
 
 const init = () => {
-  renderElement(tripControls, new SiteMenu(MENU_NAMES), RenderPosition.AFTERBEGIN);
-  renderElement(tripControls, new Filter(FILTERS), RenderPosition.BEFOREEND);
+  render(tripControls, new SiteMenu(MENU_NAMES), RenderPosition.AFTERBEGIN);
+  render(tripControls, new Filter(FILTERS), RenderPosition.BEFOREEND);
 
   const tripController = new TripController(tripEvents);
 
   tripController.render(cardsList);
 
-  renderElement(tripInfoBlock, new TripInfo(), RenderPosition.AFTERBEGIN);
+  render(tripInfoBlock, new TripInfo(), RenderPosition.AFTERBEGIN);
 
   const tripInfoRoute = tripInfoBlock.querySelector(`.trip-main__trip-info`);
 
-  renderElement(tripInfoRoute, new TripRoute(citiesList, datesList), RenderPosition.BEFOREEND);
-  renderElement(tripInfoRoute, new TripCost(cardsList), RenderPosition.BEFOREEND);
+  render(tripInfoRoute, new TripRoute(citiesList, datesList), RenderPosition.BEFOREEND);
+  render(tripInfoRoute, new TripCost(cardsList), RenderPosition.BEFOREEND);
 };
 
 init();

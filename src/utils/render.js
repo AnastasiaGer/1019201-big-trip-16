@@ -10,7 +10,7 @@ export const createElement = (template) => {
   return element.firstChild;
 };
 
-export const renderElement = (container, component, place) => {
+export const render = (container, component, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(component.getElement());

@@ -10,18 +10,18 @@ const MINUTES_PER_HOUR = 60;
 
 export const TYPES = [
   [
-    `Taxi`,
-    `Bus`,
-    `Train`,
-    `Ship`,
-    `Transport`,
-    `Drive`,
-    `Flight`
+    `Taxi to`,
+    `Bus to`,
+    `Train to`,
+    `Ship to`,
+    `Transport to`,
+    `Drive to`,
+    `Flight to`
   ],
   [
-    `Check-in`,
-    `Sightseeing`,
-    `Restaurant`
+    `Check-in in`,
+    `Sightseeing in`,
+    `Restaurant in`
   ]
 ];
 
@@ -70,7 +70,7 @@ const DESCRIPTIONS = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-const getRandomPhotos = () => {
+export const getRandomPhotos = () => {
   const photos = [];
 
   for (let i = 0; i < getRandomIntegerNumber(1, 5); i++) {
@@ -80,7 +80,7 @@ const getRandomPhotos = () => {
   return photos;
 };
 
-const getRandomDescription = () => {
+export const getRandomDescription = () => {
   return DESCRIPTIONS
     .filter(() => Math.random() > 0.5)
     .slice(0, getRandomIntegerNumber(1, 3))
@@ -88,7 +88,7 @@ const getRandomDescription = () => {
     .trim();
 };
 
-const getRandomServices = () => {
+export const getRandomServices = () => {
   const currentServices = [];
 
   for (let i = 0; i < getRandomIntegerNumber(0, 4); i++) {
@@ -132,6 +132,13 @@ const generateEvent = () => {
   };
 };
 
+
+const setIndexForCardsItem = (arr) => {
+  arr.forEach(function (elem) {
+    elem.index = arr.indexOf(elem);
+  });
+};
+
 const generateEvents = (count) => {
   return new Array(count)
     .fill(``)
@@ -142,6 +149,7 @@ const generateEvents = (count) => {
 };
 
 export const cardsList = generateEvents(EVENTS_AMOUNT);
+setIndexForCardsItem(cardsList);
 
 export const datesList = [
   ...new Set(cardsList.map((elem) => new Date(elem.start).toDateString()))
