@@ -1,5 +1,5 @@
 {
-  "name": "BigTrip",
+  "name": "bigtrip",
   "version": "1.0.0",
   "private": true,
   "description": "Личный проект «Большое путешествие» от HTML Academy",
@@ -17,7 +17,7 @@
     "style-loader": "1.2.1",
     "webpack": "4.42.1",
     "webpack-cli": "3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "3.10.3"
   },
   "engines": {
     "node": "10"
