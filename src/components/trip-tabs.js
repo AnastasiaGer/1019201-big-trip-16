@@ -1,6 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 
-const createTripMenuTemplate = (names) => {
+const createTripTabsTemplate = (names) => {
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
     <h2 class="visually-hidden">Switch trip view</h2>
@@ -13,7 +13,7 @@ const createTripMenuTemplate = (names) => {
   );
 };
 
-export default class SiteMenu extends AbstractComponent {
+export default class TripTabs extends AbstractComponent {
   constructor(names) {
     super();
 
@@ -21,6 +21,6 @@ export default class SiteMenu extends AbstractComponent {
   }
 
   getTemplate() {
-    return createTripMenuTemplate(this._names);
+    return createTripTabsTemplate(this._names);
   }
 }
