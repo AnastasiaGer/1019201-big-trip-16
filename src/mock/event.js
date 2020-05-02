@@ -121,6 +121,7 @@ const generateEvent = () => {
 
   // Сформирует поля моков event
   return {
+    id: String(new Date() + Math.random()),
     type: getRandomArrayItem(getRouteTypesArray()),
     city: getRandomArrayItem(CITIES),
     photos: getRandomPhotos(),
