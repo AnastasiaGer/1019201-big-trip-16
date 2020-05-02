@@ -1,11 +1,11 @@
 import {render, RenderPosition, remove} from "../utils/render.js";
-import Sorting, {SortType} from "../components/trip-sort.js";
+import Sorting from "../components/trip-sort.js";
 import DaysList from "../components/trip-list.js";
 import DayNumber from "../components/day-number.js";
 import NoEvents from "../components/no-events.js";
-import {SORT_OPTIONS} from "../mock/sort.js";
 import {EVENTS_AMOUNT} from "../mock/event.js";
 import PointController from "./point-controller.js";
+import {SORT_TYPE} from "../const.js";
 
 
 const getSortedEvents = (events, sortType, from, to) => {
@@ -13,13 +13,13 @@ const getSortedEvents = (events, sortType, from, to) => {
   const showingEvents = events.slice();
 
   switch (sortType) {
-    case SortType.TIME:
-      sortedEvents = showingEvents.sort((a, b) => b.time - a.time);
+    case SORT_TYPE.TIME:
+      sortedEvents = showingEvents.sort((a, b) => b.end - b.start - (a.end - a.start));
       break;
-    case SortType.PRICE:
+    case SORT_TYPE.PRICE:
       sortedEvents = showingEvents.sort((a, b) => b.price - a.price);
       break;
-    case SortType.EVENT:
+    case SORT_TYPE.EVENT:
       sortedEvents = showingEvents;
       break;
   }
@@ -29,16 +29,7 @@ const getSortedEvents = (events, sortType, from, to) => {
 
 const generateDays = (events) => {
   return [...new Set(events.map((item) => new Date(item.start).toDateString()))].sort((a, b) => {
-    return new Date(a).getDate() - new Date(b).getDate();
-  });
-};
-
-const renderEvents = (container, events, onDataChange, onViewChange) => {
-  return events.map((event) => {
-    const pointController = new PointController(container, onDataChange, onViewChange);
-
-    pointController.render(event);
-    return pointController;
+    return new Date(a).getTime() - new Date(b).getTime();
   });
 };
 
@@ -52,6 +43,15 @@ const renderTripDay = (container, events, day, index, onDataChange, onViewChange
   render(container, tripDay, RenderPosition.BEFOREEND);
 
   return pointController;
+};
+
+const renderEvents = (container, events, onDataChange, onViewChange) => {
+  return events.map((event) => {
+    const pointController = new PointController(container, onDataChange, onViewChange);
+
+    pointController.render(event);
+    return pointController;
+  });
 };
 
 const renderEventsList = (container, events, onDataChange, onViewChange) => {
@@ -77,7 +77,7 @@ export default class TripController {
 
     this._showedPointControllers = [];
     this._showingEventsCount = EVENTS_AMOUNT;
-    this._tripSortComponent = new Sorting(SORT_OPTIONS);
+    this._tripSortComponent = new Sorting();
     this._noEventsComponent = new NoEvents();
     this._dayListComponent = new DaysList();
 
@@ -85,7 +85,11 @@ export default class TripController {
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
 
+    this._onFilterChange = this._onFilterChange.bind(this);
+
     this._tripSortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
+    this._pointsModel.setFilterChangeHandler(this._onFilterChange);
+
   }
 
   render() {
@@ -126,10 +130,16 @@ export default class TripController {
     this._showedPointControllers = newPoints;
   }
 
+  _updateEvents(count) {
+    this._removeEvents();
+    this._renderEvents(this._container.querySelector(`.trip-days`), this._pointsModel.getEvents().slice(0, count));
+  }
+
   _onDataChange(pointController, oldData, newData) {
     const isSuccess = this._pointsModel.updateEvent(oldData.id, newData);
 
     if (isSuccess) {
+      // pointController.render(newData, PointControllerMode.DEFAULT);
       pointController.render(newData);
     }
   }
@@ -147,12 +157,16 @@ export default class TripController {
 
     dayList.innerHTML = ``;
 
-    if (sortType === SortType.EVENT) {
+    if (sortType === SORT_TYPE.EVENT) {
       this._removeEvents();
       this._renderEvents(dayList, sortedEvents);
     } else {
       this._removeEvents();
       this._renderTripDay(dayList, sortedEvents);
     }
+  }
+
+  _onFilterChange() {
+    this._updateEvents(EVENTS_AMOUNT);
   }
 }

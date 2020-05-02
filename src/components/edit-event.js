@@ -1,4 +1,4 @@
-import {actionByType} from "../utils/data.js";
+import {actionByType} from "../const.js";
 import {CITIES, TYPES, getRandomDescription, getRandomPhotos, getRandomServices} from "../mock/event.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 
