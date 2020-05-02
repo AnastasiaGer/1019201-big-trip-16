@@ -8,6 +8,8 @@ import TripController from "./controllers/trip-controller.js";
 import TripInfo from "./components/trip-info.js";
 import TripRoute from "./components/trip-route.js";
 import TripCost from "./components/trip-cost.js";
+import PointsModel from "./models/points.js";
+
 
 const citiesList = [
   ...new Set(cardsList.map((elem) => elem.city))
@@ -20,7 +22,10 @@ const init = () => {
   render(tripControls, new TripTabs(MENU_NAMES), RenderPosition.AFTERBEGIN);
   render(tripControls, new Filter(FILTERS), RenderPosition.BEFOREEND);
 
-  const tripController = new TripController(tripEvents);
+  const pointsModel = new PointsModel();
+  pointsModel.setEvents(cardsList);
+
+  const tripController = new TripController(tripEvents, pointsModel);
 
   tripController.render(cardsList);
 

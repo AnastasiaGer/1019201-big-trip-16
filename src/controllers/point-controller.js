@@ -1,6 +1,6 @@
 import EventItem from "../components/event-item.js";
 import EditEvent from "../components/edit-event.js";
-import {render, RenderPosition, replace} from "../utils/render.js";
+import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
 const Mode = {
   DEFAULT: `default`,
@@ -80,5 +80,11 @@ export default class PointController {
       this._replaceEditToTask();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
+  }
+
+  destroy() {
+    remove(this._eventEditComponent);
+    remove(this._eventComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 }
