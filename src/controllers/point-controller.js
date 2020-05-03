@@ -2,9 +2,23 @@ import EventItem from "../components/event-item.js";
 import EditEvent from "../components/edit-event.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
-const Mode = {
+export const Mode = {
+  ADDING: `adding`,
   DEFAULT: `default`,
   EDIT: `edit`,
+};
+
+export const EmptyEvent = {
+  type: `taxi`,
+  city: ``,
+  offers: [],
+  price: 0,
+  description: ``,
+  photos: [],
+  startDate: Date.now(),
+  endDate: Date.now(),
+  isFavorite: false,
+  isNew: true
 };
 
 export default class PointController {
