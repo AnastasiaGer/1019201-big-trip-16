@@ -1,25 +1,38 @@
 import EventItem from "../components/event-item.js";
 import EditEvent from "../components/edit-event.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
+import moment from "moment";
+import {getRandomDate} from "../mock/event.js";
+
 
 export const Mode = {
-  ADDING: `adding`,
   DEFAULT: `default`,
   EDIT: `edit`,
+  CREATING: `creating`
 };
 
 export const EmptyEvent = {
-  type: `taxi`,
+  id: String(Math.floor(getRandomDate() + Math.random())),
+  type: `Bus to`,
   city: ``,
-  offers: [],
-  price: 0,
-  description: ``,
   photos: [],
-  startDate: Date.now(),
-  endDate: Date.now(),
-  isFavorite: false,
-  isNew: true
+  description: ``,
+  services: [],
+  start: Math.min(getRandomDate(), getRandomDate()),
+  end: Math.max(getRandomDate(), getRandomDate()),
+  price: 0,
+  isFavorite: false
 };
+
+const parseFormData = (formData) => {
+  return {
+    city: formData.get(`event-destination`),
+    start: moment(formData.get(`event-start-time`), `DD/MM/YYYY HH:mm`),
+    end: moment(formData.get(`event-end-time`), `DD/MM/YYYY HH:mm`),
+    price: formData.get(`event-price`)
+  };
+};
+
 
 export default class PointController {
   constructor(container, onDataChange, onViewChange) {
@@ -49,30 +62,39 @@ export default class PointController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      const data = this._editEventComponent.getData();
-      this._onDataChange(this, event, data);
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
+      const formData = this._eventEditComponent.getData();
+      const data = parseFormData(formData);
+
+      this._onDataChange(this, event, Object.assign({}, event, data));
+      this._replaceEditToTask();
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
-
-    this._eventEditComponent.setCloseHandler((evt) => {
-      evt.preventDefault();
-      this._replaceEditToTask();
-    });
 
     this._eventEditComponent.setFavoritesButtonClickHandler(() => {
       this._onDataChange(this, event, Object.assign({}, event, {
         isFavorite: !event.isFavorite,
       }));
+      this._mode = Mode.EDIT;
     });
 
-    if (oldEventComponent && oldEventEditComponent) {
-      replace(this._eventComponent, oldEventComponent);
-      replace(this._eventEditComponent, oldEventEditComponent);
-      this._replaceEditToTask();
-    } else {
-      render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+    switch (mode) {
+      case Mode.DEFAULT:
+        if (oldEventComponent && oldEventEditComponent) {
+          replace(this._eventComponent, oldEventComponent);
+          replace(this._eventEditComponent, oldEventEditComponent);
+        } else {
+          render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+        }
+        break;
+      case Mode.CREATING:
+        if (oldEventComponent && oldEventEditComponent) {
+          remove(oldEventComponent);
+          remove(oldEventEditComponent);
+        }
+        document.addEventListener(`keydown`, this._onEscKeyDown);
+        render(this._container, this._eventEditComponent, RenderPosition.AFTERBEGIN);
+        break;
     }
   }
 
@@ -90,14 +112,9 @@ export default class PointController {
 
   _replaceEditToTask() {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
-    this._eventEditComponent.reset();
-    // replace(this._eventComponent, this._eventEditComponent);
-
-    if (document.contains(this._eventEditComponent.getElement())) {
-      replace(this._eventComponent, this._eventEditComponent);
-    }
-
+    replace(this._eventComponent, this._eventEditComponent);
     this._mode = Mode.DEFAULT;
+
   }
 
   _onEscKeyDown(evt) {

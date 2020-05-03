@@ -98,7 +98,7 @@ export const getRandomServices = () => {
   return currentServices;
 };
 
-const getRandomDate = () => {
+export const getRandomDate = () => {
   return (
     Date.now() +
     1 +
