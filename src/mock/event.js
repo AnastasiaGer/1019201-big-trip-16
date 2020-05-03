@@ -33,26 +33,26 @@ export const CITIES = [
   `Moscow`,
 ];
 
-const SERVICES = [
+export const SERVICES = [
   {
-    type: `luggage`,
-    title: `Add luggage`,
-    price: 30
+    title: `add luggage`,
+    cost: `30`,
   },
   {
-    type: `comfort`,
-    title: `Switch to comfort class`,
-    price: 100
+    title: `switch to comfort`,
+    cost: `100`,
   },
   {
-    type: `meal`,
-    title: `Add meal`,
-    price: 15
+    title: `add meal`,
+    cost: `15`,
   },
   {
-    type: `seats`,
-    title: `Choose seats`,
-    price: 5
+    title: `travel by train`,
+    cost: `40`,
+  },
+  {
+    title: `choose seats`,
+    cost: `30`,
   }
 ];
 

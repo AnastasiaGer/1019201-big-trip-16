@@ -49,7 +49,7 @@ const renderEvents = (container, events, onDataChange, onViewChange) => {
   return events.map((event) => {
     const pointController = new PointController(container, onDataChange, onViewChange);
 
-    pointController.render(event);
+    pointController.render(event, PointControllerMode.DEFAULT);
     return pointController;
   });
 };
