@@ -1,5 +1,3 @@
-export const MONTHS = [`JAN`, `FEB`, `MAR`, `APR`, `MAY`, `JUN`, `JUL`, `AUG`, `SEP`, `OCT`, `NOV`, `DEC`];
-
 export const actionByType = new Map([
   [`taxi`, `Taxi to`],
   [`bus`, `Bus to`],
@@ -37,19 +35,4 @@ export const EVENT_TYPE = {
   SIGHTSEEING: `sightseeing`,
   RESTAURANT: `restaurant`,
 };
-
-export const SORT_OPTIONS = [
-  {
-    name: `event`,
-    isChecked: true
-  },
-  {
-    name: `time`,
-    isChecked: false
-  },
-  {
-    name: `price`,
-    isChecked: false
-  }
-];
 

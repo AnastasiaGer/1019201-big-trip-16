@@ -5,29 +5,33 @@ export const TablItem = {
   STATS: `control__stats`,
 };
 
-const createMenuTemplate = (names) => {
+const createTabMarkup = (tab, isActive) => {
+  const {name} = tab;
+
+  return (
+    `<a class="trip-tabs__btn  trip-tabs__btn${isActive ? `--active control__table` : ` control__stats`}" href="#">${name}</a>`
+  );
+};
+
+const createTripTabsTemplate = (tabs) => {
+  const tabsMarkup = tabs.map((item, i) => createTabMarkup(item, i === 0)).join(`\n`);
+
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
-    <h2 class="visually-hidden">Switch trip view</h2>
-    ${names.map((name) => {
-      return (`
-      <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">${name}</a>
-    `);
-    }).join(``)}
+      ${tabsMarkup}
     </nav>`
   );
 };
 
 export default class TripTabs extends AbstractComponent {
-  constructor(names) {
+  constructor(tabs) {
     super();
 
-    this._names = names;
-    this._element = null;
+    this._tabs = tabs;
   }
 
   getTemplate() {
-    return createMenuTemplate(this._names);
+    return createTripTabsTemplate(this._tabs);
   }
 
   setActiveItem(tablItem) {

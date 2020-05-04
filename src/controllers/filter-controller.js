@@ -1,7 +1,7 @@
 import Filter from "../components/trip-filter.js";
 import {render, replace, RenderPosition} from "../utils/render.js";
-import {getEventsByFilter} from "../utils/filter.js";
 import {FILTER_TYPE} from "../const.js";
+import {getEventsByFilter} from "../utils/filter.js";
 
 
 export default class FilterController {
@@ -38,7 +38,7 @@ export default class FilterController {
     if (oldComponent) {
       replace(this._tripFiltersComponent, oldComponent);
     } else {
-      render(container, this._tripFiltersComponent, RenderPosition.AFTEREND);
+      render(container, this._tripFiltersComponent, RenderPosition.AFTERBEGIN);
     }
   }
 

@@ -49,7 +49,7 @@ const getServices = (services) => {
 const getPhotosList = (photos) => {
   return photos.map((photo) => {
     return (`<img class="event__photo" src="${photo}" alt="Event photo">`);
-  });
+  }).join(``);
 };
 
 const getCities = (citiesName, elem) => {

@@ -56,7 +56,7 @@ export default class PointController {
     this._eventEditComponent = new EditEvent(event);
 
     this._eventComponent.setClickHandler(() => {
-      this._replaceTaskToEdit();
+      this._replaceEventToEdit();
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
@@ -66,7 +66,7 @@ export default class PointController {
       const data = parseFormData(formData);
 
       this._onDataChange(this, event, Object.assign({}, event, data));
-      this._replaceEditToTask();
+      this. _replaceEditToEvent();
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
@@ -80,37 +80,40 @@ export default class PointController {
 
     switch (mode) {
       case Mode.DEFAULT:
-        if (oldEventComponent && oldEventEditComponent) {
+        if (oldEventEditComponent && oldEventComponent) {
           replace(this._eventComponent, oldEventComponent);
           replace(this._eventEditComponent, oldEventEditComponent);
+          this. _replaceEditToEvent();
         } else {
           render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
         }
         break;
       case Mode.CREATING:
-        if (oldEventComponent && oldEventEditComponent) {
+        if (oldEventEditComponent && oldEventComponent) {
           remove(oldEventComponent);
           remove(oldEventEditComponent);
         }
+        const container = document.querySelector(`.trip-events__trip-sort`);
         document.addEventListener(`keydown`, this._onEscKeyDown);
-        render(this._container, this._eventEditComponent, RenderPosition.AFTERBEGIN);
+        render(container, this._eventEditComponent, RenderPosition.AFTEREND);
+        document.querySelector(`.event--edit`).classList.add(`trip-events__item`);
         break;
     }
   }
 
   setDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._replaceEditToTask();
+      this. _replaceEditToEvent();
     }
   }
 
-  _replaceTaskToEdit() {
+  _replaceEventToEdit() {
     this._onViewChange();
     replace(this._eventEditComponent, this._eventComponent);
     this._mode = Mode.EDIT;
   }
 
-  _replaceEditToTask() {
+  _replaceEditToEvent() {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     replace(this._eventComponent, this._eventEditComponent);
     this._mode = Mode.DEFAULT;
@@ -121,7 +124,10 @@ export default class PointController {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
-      this._replaceEditToTask();
+      if (this._mode === Mode.CREATING) {
+        this._onDataChange(this, EmptyEvent, null);
+      }
+      this. _replaceEditToEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   }
