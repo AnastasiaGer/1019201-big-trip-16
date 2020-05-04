@@ -1,13 +1,12 @@
+import moment from "moment";
+import flatpickr from "flatpickr";
+import 'flatpickr/dist/flatpickr.min.css';
+
+import {EmptyEvent} from '../controllers/point-controller.js';
+import {clearString} from "../utils/common.js";
 import {actionByType} from "../const.js";
 import {CITIES, TYPES, getRandomDescription, getRandomPhotos, getRandomServices} from "../mock/event.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {EmptyEvent} from '../controllers/point-controller.js';
-import {clearString} from "../utils/common.js";
-
-
-import flatpickr from "flatpickr";
-import moment from "moment";
-import 'flatpickr/dist/flatpickr.min.css';
 
 const getTypeTransport = (typesTransport) => {
   return typesTransport.map((typeTransport) => {
@@ -179,7 +178,6 @@ export default class EditEvent extends AbstractSmartComponent {
     this._deleteButtonClickHandler = null;
 
     this._applyFlatpickr();
-
     this._subscribeOnEvents();
   }
 

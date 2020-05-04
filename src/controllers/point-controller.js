@@ -55,6 +55,8 @@ export default class PointController {
     this._eventComponent = new EventItem(event);
     this._eventEditComponent = new EditEvent(event);
 
+    const eventsList = this._container.querySelector(`.trip-events__list`);
+
     this._eventComponent.setClickHandler(() => {
       this._replaceEventToEdit();
       document.addEventListener(`keydown`, this._onEscKeyDown);
@@ -83,9 +85,8 @@ export default class PointController {
         if (oldEventEditComponent && oldEventComponent) {
           replace(this._eventComponent, oldEventComponent);
           replace(this._eventEditComponent, oldEventEditComponent);
-          this. _replaceEditToEvent();
         } else {
-          render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+          render(eventsList, this._eventComponent, RenderPosition.BEFOREEND);
         }
         break;
       case Mode.CREATING:
@@ -93,10 +94,8 @@ export default class PointController {
           remove(oldEventComponent);
           remove(oldEventEditComponent);
         }
-        const container = document.querySelector(`.trip-events__trip-sort`);
         document.addEventListener(`keydown`, this._onEscKeyDown);
-        render(container, this._eventEditComponent, RenderPosition.AFTEREND);
-        document.querySelector(`.event--edit`).classList.add(`trip-events__item`);
+        render(eventsList, this._eventEditComponent, RenderPosition.AFTERBEGIN);
         break;
     }
   }
