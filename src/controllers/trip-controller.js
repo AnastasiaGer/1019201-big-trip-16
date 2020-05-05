@@ -7,18 +7,22 @@ import PointController, {Mode as PointControllerMode, EmptyEvent} from "./point-
 import {SORT_TYPE} from "../const.js";
 
 
-const renderPoints = (events, container, onDataChange, onViewChange) => {
+const renderPoints = (events, container, onDataChange, onViewChange, isDefaultSorting = true) => {
   const pointControllers = [];
 
-  const dates = [...new Set(events.map((elem) => new Date(elem.start).toDateString()))];
+  const dates = isDefaultSorting
+    ? [...new Set(events.map((elem) => new Date(elem.start).toDateString()))]
+    : [true];
 
   dates.forEach((date, dateIndex) => {
-    const day = new DayNumber(date, dateIndex + 1);
+    const day = isDefaultSorting
+      ? new DayNumber(date, dateIndex + 1)
+      : new DayNumber();
 
     const dayElement = day.getElement();
 
     events.filter((event) => {
-      return new Date(event.start).toDateString() === date;
+      return isDefaultSorting ? new Date(event.start).toDateString() === date : event;
     }).map((event) => {
       const pointController = new PointController(dayElement, onDataChange, onViewChange);
       pointController.render(event, PointControllerMode.DEFAULT);
@@ -116,12 +120,13 @@ export default class TripController {
 
   _onSortTypeChange(sortType) {
     let sortedPoints = [];
-
+    let isDefaultSorting = false;
     const points = this._pointsModel.getEvents();
 
     switch (sortType) {
       case SORT_TYPE.EVENT:
         sortedPoints = points.slice();
+        isDefaultSorting = true;
         break;
       case SORT_TYPE.PRICE:
         sortedPoints = points.slice().sort((a, b) => b.price - a.price);
@@ -132,7 +137,7 @@ export default class TripController {
     }
 
     this._removePoints();
-    this._pointsControllers = renderPoints(sortedPoints, this._daysContainer, this._onDataChange, this._onViewChange);
+    this._pointsControllers = renderPoints(sortedPoints, this._daysContainer, this._onDataChange, this._onViewChange, isDefaultSorting);
   }
 
   _onViewChange() {
