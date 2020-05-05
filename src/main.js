@@ -18,29 +18,34 @@ const tripInfoBlock = document.querySelector(`.trip-main`);
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 const tripEvents = document.querySelector(`.trip-events`);
 
-const tabs = generateTabs();
+const init = () => {
 
-const tripTabsComponent = new TripTabs(tabs);
-render(tripControls, tripTabsComponent, RenderPosition.AFTERBEGIN);
+  const tabs = generateTabs();
 
-const pointsModel = new PointsModel();
-pointsModel.setEvents(cardsList);
+  const tripTabsComponent = new TripTabs(tabs);
+  render(tripControls, tripTabsComponent, RenderPosition.AFTERBEGIN);
 
-const filterController = new FilterController(tripControls, pointsModel);
-filterController.render();
+  const pointsModel = new PointsModel();
+  pointsModel.setEvents(cardsList);
 
-const tripController = new TripController(tripEvents, pointsModel);
-tripController.render(cardsList);
+  const filterController = new FilterController(tripControls, pointsModel);
+  filterController.render();
 
-document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
-  tripController.createPoint();
-});
+  const tripController = new TripController(tripEvents, pointsModel);
+  tripController.render(cardsList);
+
+  document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+    tripController.createPoint();
+  });
 
 
-render(tripInfoBlock, new TripInfo(), RenderPosition.AFTERBEGIN);
+  render(tripInfoBlock, new TripInfo(), RenderPosition.AFTERBEGIN);
 
-const tripInfoRoute = tripInfoBlock.querySelector(`.trip-main__trip-info`);
+  const tripInfoRoute = tripInfoBlock.querySelector(`.trip-main__trip-info`);
 
-render(tripInfoRoute, new TripRoute(citiesList, datesList), RenderPosition.BEFOREEND);
-render(tripInfoRoute, new TripCost(cardsList), RenderPosition.BEFOREEND);
+  render(tripInfoRoute, new TripRoute(citiesList, datesList), RenderPosition.BEFOREEND);
+  render(tripInfoRoute, new TripCost(cardsList), RenderPosition.BEFOREEND);
 
+};
+
+init();
