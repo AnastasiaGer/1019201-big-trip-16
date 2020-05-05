@@ -33,7 +33,7 @@ export const CITIES = [
   `Moscow`,
 ];
 
-const SERVICES = [
+export const SERVICES = [
   {
     type: `luggage`,
     title: `Add luggage`,
@@ -98,7 +98,7 @@ export const getRandomServices = () => {
   return currentServices;
 };
 
-const getRandomDate = () => {
+export const getRandomDate = () => {
   return (
     Date.now() +
     1 +
@@ -121,6 +121,7 @@ const generateEvent = () => {
 
   // Сформирует поля моков event
   return {
+    id: String(new Date() + Math.random()),
     type: getRandomArrayItem(getRouteTypesArray()),
     city: getRandomArrayItem(CITIES),
     photos: getRandomPhotos(),
