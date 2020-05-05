@@ -7,7 +7,7 @@ import PointController, {Mode as PointControllerMode, EmptyEvent} from "./point-
 import {SORT_TYPE} from "../const.js";
 
 
-const renderPoints = (events, container, onDataChange, onViewChange, isDefaultSorting = true) => {
+const renderPoints = (events, container, onDataChange, onViewChange, isDefaultSorting) => {
   const pointControllers = [];
 
   const dates = isDefaultSorting
