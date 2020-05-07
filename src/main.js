@@ -17,7 +17,7 @@ const citiesList = [
 const tripInfoBlock = document.querySelector(`.trip-main`);
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 const tripEvents = document.querySelector(`.trip-events`);
-const siteMainElement = document.querySelector(`.page-main`);
+const siteMainElement = document.querySelector(`.page-main .page-body__container`);
 
 
 const init = () => {
@@ -49,8 +49,6 @@ const init = () => {
 
   const statisticsComponent = new Statistics(pointsModel);
   render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
-  statisticsComponent.hide();
-
 
   tripTabsComponent.setOnChange((tablItem) => {
     switch (tablItem) {

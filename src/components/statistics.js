@@ -1,133 +1,139 @@
 import AbstractSmartComponent from "./abstract-smart-component";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY, CURRENCY} from '../const.js';
-import moment from "moment";
 
-const COLOR = `#ffffff`;
+const renderMoneyChart = (moneyCtx) => {
 
-
-const getUniqItems = (item, index, array) => {
-  return array.indexOf(item) === index;
-};
-
-const calcUniqueActivity = (events, activity) => {
-  return events.filter((it) => it.travelPoints === activity).length;
-};
-
-const calcTimeUniqueActivity = (events, activity) => {
-  return events
-  .filter((point) => point.travelPoints === activity)
-  .reduce((total, point) =>
-    total + moment(point.endDate).diff(moment(point.startDate), `hours`, true), 0);
-};
-
-const calcPriceUniqueActivity = (events, activity) => {
-  return events
-  .filter((point) => point.travelPoints === activity)
-  .reduce((total, point) =>
-    total + point.price, 0);
-};
-const getUpperCase = (lowerCaseArray) => lowerCaseArray.map((lowerCaseItem) =>lowerCaseItem.toUpperCase());
-
-const CHART_INFO = {
-  MONEY: {
-    name: `MONEY`,
-    remark: CURRENCY,
-    remarkPlace: `start`,
-    formula: calcPriceUniqueActivity
-  },
-  TIME: {
-    name: `TIME SPENT`,
-    remark: `H`,
-    remarkPlace: `end`,
-    formula: calcTimeUniqueActivity
-  },
-  TRANSPORT: {
-    name: `TRANSPORT`,
-    remark: `x`,
-    remarkPlace: `end`,
-    formula: calcUniqueActivity,
-  }
-};
-
-const renderChart = (colorCtx, events, array, details) => {
-  const activities = events
-  .reduce((total, amount) => {
-    if (array.includes(amount.travelPoints)) {
-      total.push(amount.travelPoints);
-    }
-    return total;
-  }, [])
-  .filter(getUniqItems);
-
-  return new Chart(colorCtx, {
+  return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: getUpperCase(activities),
+      labels: [`FLY`, `STAY`, `DRIVE`, `LOOK`, `RIDE`],
       datasets: [{
-        data: activities.map((activity) => details.formula(events, activity)),
-        backgroundColor: COLOR
-      }],
+        data: [400, 300, 200, 160, 100],
+        backgroundColor: `#ffffff`,
+        hoverBackgroundColor: `#ffffff`,
+        anchor: `start`
+      }]
     },
     options: {
-      title: {
-        display: true,
-        position: `left`,
-        text: details.name,
-        fontSize: 25,
-        fontColor: `#000000`
-      },
-      legend: {
-        display: false,
-      },
-      scales: {
-        xAxes: [{
-          gridLines: {
-            display: false,
-          },
-          ticks: {
-            min: 0,
-            display: false
-          }
-        }],
-        yAxes: [{
-          gridLines: {
-            display: false,
-          }
-        }]
-      },
       plugins: {
         datalabels: {
-          display: true,
+          font: {
+            size: 13
+          },
+          color: `#000000`,
           anchor: `end`,
-          align: `left`,
-          fontSize: `20px`,
-          fontWeight: `bold`,
-          formatter: (value) => {
-            return details.remarkPlace === `start` ? `${details.remark + ` ` + Math.round(value)}` : `${Math.round(value) + ` ` + details.remark}`;
-          }
-        }
-      }
-    },
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem, data) => {
-          const allData = data.datasets[tooltipItem.datasetIndex].data;
-          const tooltipData = allData[tooltipItem.index];
-          return `${tooltipData}`;
+          align: `start`,
+          formatter: (val) => `€ ${val}`
         }
       },
-      displayColors: false,
-      backgroundColor: `red`,
-      bodyFontColor: `#000000`,
-      borderColor: COLOR,
-      borderWidth: 1,
-      cornerRadius: 0,
-      xPadding: 10,
-      yPadding: 10
+      title: {
+        display: true,
+        text: `MONEY`,
+        fontColor: `#000000`,
+        fontSize: 23,
+        position: `left`
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#000000`,
+            padding: 5,
+            fontSize: 13,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          barThickness: 44,
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          minBarLength: 50
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false,
+      }
+    }
+  });
+};
+const renderTransportChart = (transportCtx) => {
+
+  return new Chart(transportCtx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: [`FLY`, `DRIVE`, `RIDE`],
+      datasets: [{
+        data: [4, 2, 1],
+        backgroundColor: `#ffffff`,
+        hoverBackgroundColor: `#ffffff`,
+        anchor: `start`
+      }]
     },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 13
+          },
+          color: `#000000`,
+          anchor: `end`,
+          align: `start`,
+          formatter: (val) => `${val}x`
+        }
+      },
+      title: {
+        display: true,
+        text: `TRANSPORT`,
+        fontColor: `#000000`,
+        fontSize: 23,
+        position: `left`
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#000000`,
+            padding: 5,
+            fontSize: 13,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          barThickness: 44,
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          minBarLength: 50
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false,
+      }
+    }
   });
 };
 
@@ -152,12 +158,9 @@ const createStatisticsTemplate = () => {
 };
 
 export default class Statistics extends AbstractSmartComponent {
-  constructor(events) {
+  constructor() {
     super();
-    this._events = events;
-    this._moneyChart = null;
-    this._transportChart = null;
-    this._timeChart = null;
+
     this._renderCharts();
   }
 
@@ -167,13 +170,12 @@ export default class Statistics extends AbstractSmartComponent {
 
   show() {
     super.show();
-    this.rerender(this._events);
+    this.rerender();
   }
 
   recoveryListeners() {}
 
-  rerender(events) {
-    this._events = events;
+  rerender() {
     super.rerender();
     this._renderCharts();
   }
@@ -182,13 +184,11 @@ export default class Statistics extends AbstractSmartComponent {
     const element = this.getElement();
     const moneyCtx = element.querySelector(`.statistics__chart--money`);
     const transportCtx = element.querySelector(`.statistics__chart--transport`);
-    const timeCtx = element.querySelector(`.statistics__chart--time`);
 
     this._resetCharts();
 
-    this._moneyChart = renderChart(moneyCtx, this._events.getEvents(), [...TRAVEL_TRANSPORT, ...TRAVEL_ACTIVITY], CHART_INFO.MONEY);
-    this._transportChart = renderChart(transportCtx, this._events.getEvents(), TRAVEL_TRANSPORT, CHART_INFO.TRANSPORT);
-    this._timeChart = renderChart(timeCtx, this._events.getEvents(), [...TRAVEL_TRANSPORT, ...TRAVEL_ACTIVITY], CHART_INFO.TIME);
+    this._moneyChart = renderMoneyChart(moneyCtx);
+    this._transportChart = renderTransportChart(transportCtx);
   }
 
   _resetCharts() {
@@ -200,11 +200,6 @@ export default class Statistics extends AbstractSmartComponent {
     if (this._transportChart) {
       this._transportChart.destroy();
       this._transportChart = null;
-    }
-
-    if (this._timeChart) {
-      this._timeChart.destroy();
-      this._timeChart = null;
     }
   }
 }
