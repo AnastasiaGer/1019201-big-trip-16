@@ -36,8 +36,6 @@ export const EVENT_TYPE = {
   RESTAURANT: `restaurant`,
 };
 
-export const CURRENCY = `€`;
-
 export const TRAVEL_TRANSPORT = [
   `taxi`,
   `bus`,
