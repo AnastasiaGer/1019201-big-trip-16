@@ -61,7 +61,6 @@ export default class EventItem extends AbstractComponent {
     super();
 
     this._cardData = cardData;
-    this._element = null;
   }
 
   getTemplate() {

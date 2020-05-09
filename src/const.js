@@ -11,6 +11,8 @@ export const actionByType = new Map([
   [`restaurant`, `Restaurant in`]
 ]);
 
+export const CURRENCY = `€`;
+
 export const SORT_TYPE = {
   EVENT: `event`,
   TIME: `time`,
