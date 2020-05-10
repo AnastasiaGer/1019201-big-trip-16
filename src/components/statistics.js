@@ -5,6 +5,7 @@ import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY, CURRENCY} from '../const.js';
 import moment from 'moment';
 
 const COLOR = `#ffffff`;
+const BAR_HEIGHT = 55;
 
 const getUniqItems = (item, index, array) => {
   return array.indexOf(item) === index;
@@ -55,6 +56,7 @@ const renderChart = (colorCtx, points, array, details) => {
   const activities = points
     .map((event) => event.type)
     .filter(getUniqItems);
+  colorCtx.height = BAR_HEIGHT * activities.length;
 
   return new Chart(colorCtx, {
     plugins: [ChartDataLabels],
@@ -63,7 +65,7 @@ const renderChart = (colorCtx, points, array, details) => {
       labels: getUpperCase(activities),
       datasets: [{
         data: activities.map((activity) => details.formula(points, activity)),
-        backgroundColor: COLOR
+        backgroundColor: COLOR,
       }],
     },
     options: {
