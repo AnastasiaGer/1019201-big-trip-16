@@ -25,7 +25,7 @@ const calcTimeUniqueActivity = (points, activity) => {
   return points
   .filter((point) => point.type === activity)
   .reduce((total, point) =>
-    total + moment(point.endDate).diff(moment(point.startDate), `hours`, true), 0);
+    total + moment(point.end).diff(moment(point.start), `hours`, true), 0);
 };
 
 const CHART_INFO = {
@@ -53,13 +53,8 @@ const getUpperCase = (lowerCaseArray) => lowerCaseArray.map((lowerCaseItem) => l
 
 const renderChart = (colorCtx, points, array, details) => {
   const activities = points
-  .reduce((total, amount) => {
-    if (array.includes(amount.travelPoints)) {
-      total.push(amount.travelPoints);
-    }
-    return total;
-  }, [])
-  .filter(getUniqItems);
+    .map((event) => event.type)
+    .filter(getUniqItems);
 
   return new Chart(colorCtx, {
     plugins: [ChartDataLabels],
