@@ -9,6 +9,10 @@ const TIME_FORMAT = 1000;
 const MINUTES_PER_HOUR = 60;
 
 export const TYPES = [
+  [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`]
+];
+
+export const TYPESS = [
   [
     `Taxi to`,
     `Bus to`,

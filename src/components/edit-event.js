@@ -5,7 +5,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import {EmptyEvent} from '../controllers/point-controller.js';
 import {clearString} from "../utils/common.js";
 import {actionByType} from "../const.js";
-import {CITIES, TYPES, getRandomDescription, getRandomPhotos, getRandomServices} from "../mock/event.js";
+import {CITIES, TYPESS, getRandomDescription, getRandomPhotos, getRandomServices} from "../mock/event.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 
 const getTypeTransport = (typesTransport) => {
@@ -66,10 +66,11 @@ const createEditEventTemplate = (cardData, option) => {
   }
   const {start, end, price, isFavorite, index} = cardData;
   const {type, city, description, photos, services} = option;
+  const isMove = [`Check-in`, `Sightseeing`, `Restaurant`].some((item) => item === type) ? `in` : `to`;
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
-  const typeTransport = getTypeTransport(TYPES[0]);
-  const typeActivity = getTypeActivity(TYPES[1]);
+  const typeTransport = getTypeTransport(TYPESS[0]);
+  const typeActivity = getTypeActivity(TYPESS[1]);
   const servicesList = getServices(services);
   const photosList = getPhotosList(photos);
   const citiesList = getCities(CITIES, city);
@@ -81,7 +82,7 @@ const createEditEventTemplate = (cardData, option) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${type.slice(0, -3)}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
           <div class="event__type-list">
@@ -96,9 +97,9 @@ const createEditEventTemplate = (cardData, option) => {
           </div>
         </div>
         <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-1">
-          ${type}
-          </label>
+        <label class="event__label  event__type-output" for="event-destination-1">
+        ${type} ${isMove}
+      </label>
           <select class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
           ${citiesList}
@@ -249,7 +250,7 @@ export default class EditEvent extends AbstractSmartComponent {
 
 
   setDeleteButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, handler);
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
 
     this._deleteButtonClickHandler = handler;
   }
