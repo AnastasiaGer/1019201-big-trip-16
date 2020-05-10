@@ -1,45 +1,35 @@
 import AbstractComponent from "./abstract-component.js";
+const ACTIVE_CLASS = `trip-tabs__btn--active`;
 
 export const TablItem = {
-  TABS: `control__table`,
-  STATS: `control__stats`,
+  TABLE: `control-table`,
+  STATS: `control-stats`
 };
 
-const createTabMarkup = (tab, isActive) => {
-  const {name} = tab;
-
-  return (
-    `<a class="trip-tabs__btn  trip-tabs__btn${isActive ? `--active control__table` : ` control__stats`}" href="#">${name}</a>`
-  );
-};
-
-const createTripTabsTemplate = (tabs) => {
-  const tabsMarkup = tabs.map((item, i) => createTabMarkup(item, i === 0)).join(`\n`);
-
+const createMenuTemplate = () => {
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
-      ${tabsMarkup}
+      <h2 class="visually-hidden">Switch trip view</h2>
+      <a id="control-table" class="trip-tabs__btn" href="#">Table</a>
+      <a id="control-stats" class="trip-tabs__btn" href="#">Stats</a>
     </nav>`
   );
 };
 
 export default class TripTabs extends AbstractComponent {
-  constructor(tabs) {
-    super();
-
-    this._tabs = tabs;
-  }
-
   getTemplate() {
-    return createTripTabsTemplate(this._tabs);
+    return createMenuTemplate();
   }
 
-  setActiveItem(tablItem) {
-    const item = this.getElement().querySelector(`.${tablItem}`);
-
-    if (item) {
-      item.checked = true;
-    }
+  setActiveItem(selectedItem) {
+    this.getElement().querySelectorAll(`.trip-tabs__btn`)
+      .forEach((it) => {
+        if (it.id === selectedItem) {
+          it.classList.add(ACTIVE_CLASS);
+        } else {
+          it.classList.remove(ACTIVE_CLASS);
+        }
+      });
   }
 
   setOnChange(handler) {
@@ -47,10 +37,11 @@ export default class TripTabs extends AbstractComponent {
       if (evt.target.tagName !== `A`) {
         return;
       }
+      evt.preventDefault();
 
-      const tablItem = evt.target.id;
+      const menuItem = evt.target.id;
 
-      handler(tablItem);
+      handler(menuItem);
     });
   }
 }

@@ -55,11 +55,11 @@ export default class TripController {
   }
 
   hide() {
-    this._container.hide();
+    this._daysContainer.hide();
   }
 
   show() {
-    this._container.show();
+    this._daysContainer.show();
   }
 
   render() {

@@ -49,16 +49,21 @@ const init = () => {
 
   const statisticsComponent = new Statistics(pointsModel);
   render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
+  statisticsComponent.hide();
 
-  tripTabsComponent.setOnChange((tablItem) => {
-    switch (tablItem) {
+  tripTabsComponent.setOnChange((item) => {
+    switch (item) {
+      case TablItem.TABLE:
+        tripTabsComponent.setActiveItem(TablItem.TABLE);
+        tripController._sortComponent.show();
+        tripController.show();
+        statisticsComponent.hide();
+        break;
       case TablItem.STATS:
+        tripTabsComponent.setActiveItem(TablItem.STATS);
+        tripController._sortComponent.hide();
         tripController.hide();
         statisticsComponent.show();
-        break;
-      case TablItem.TABLE:
-        statisticsComponent.hide();
-        tripController.show();
         break;
     }
   });
