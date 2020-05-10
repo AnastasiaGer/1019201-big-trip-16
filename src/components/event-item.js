@@ -16,10 +16,10 @@ const getServices = (services) => {
 
 const createEventTemplate = (event) => {
 
-  const {type, city, price, offers, startDate, endDate} = event;
+  const {type, city, price, services, startDate, endDate} = event;
 
   const isMove = [`Check-in`, `Sightseeing`, `Restaurant`].some((item) => item === type) ? `in` : `to`;
-  const isArrive = !!offers;
+  const isArrive = !!services;
 
   const duration = moment.duration(moment(endDate).diff(moment(startDate)));
   const startDatetime = moment(startDate).format(`YYYY-MM-DDThh:mm`);
@@ -27,12 +27,13 @@ const createEventTemplate = (event) => {
   let days = duration.days();
   let hours = duration.hours();
   let minutes = duration.minutes();
+  const servicesList = getServices(services);
 
   return (
     `<li class="trip-events__item">
       <div class="event">
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">${type} ${isMove} ${city}</h3>
         <div class="event__schedule">
@@ -49,7 +50,7 @@ const createEventTemplate = (event) => {
         ${isArrive ?
       `<h4 class="visually-hidden">Offers:</h4>
             <ul class="event__selected-offers">
-            ${getServices(offers)}
+            ${servicesList}
             </ul>`
       : ``
     }

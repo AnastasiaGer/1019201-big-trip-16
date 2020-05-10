@@ -50,19 +50,18 @@ const CHART_INFO = {
   }
 };
 
-const getUpperCase = (lowerCaseArray) => lowerCaseArray.map((lowerCaseItem) => lowerCaseItem.toUpperCase());
-
 const renderChart = (colorCtx, points, array, details) => {
   const activities = points
     .map((event) => event.type)
     .filter(getUniqItems);
+
   colorCtx.height = BAR_HEIGHT * activities.length;
 
   return new Chart(colorCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: getUpperCase(activities),
+      labels: activities,
       datasets: [{
         data: activities.map((activity) => details.formula(points, activity)),
         backgroundColor: COLOR,
