@@ -1,7 +1,7 @@
 import AbstractComponent from "./abstract-component.js";
 import moment from "moment";
 import {TRAVEL_TRANSPORT, Placeholder} from '../const.js';
-
+import {getUpperCaseFirstLetter} from '../utils/common.js';
 
 const getServices = (services) => {
   return services.map((service) => {
@@ -22,8 +22,8 @@ const createEventTemplate = (event) => {
   const isArrive = !!services;
 
   const duration = moment.duration(moment(endDate).diff(moment(startDate)));
-  const startDatetime = moment(startDate).format(`YYYY-MM-DDThh:mm`);
-  const endDatetime = moment(endDate).format(`YYYY-MM-DDThh:mm`);
+  const startDateTime = moment(startDate).format(`YYYY-MM-DDThh:mm`);
+  const endDateTime = moment(endDate).format(`YYYY-MM-DDThh:mm`);
   let days = duration.days();
   let hours = duration.hours();
   let minutes = duration.minutes();
@@ -35,12 +35,12 @@ const createEventTemplate = (event) => {
         <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type}  ${TRAVEL_TRANSPORT.includes(type) ? Placeholder.TRANSPORT : Placeholder.ACTION} ${city}</h3>
+        <h3 class="event__title">${getUpperCaseFirstLetter(type)}  ${TRAVEL_TRANSPORT.includes(type) ? Placeholder.TRANSPORT : Placeholder.ACTION} ${city}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${startDatetime}">${moment(startDatetime).format(`hh:mm`)}</time>
+            <time class="event__start-time" datetime="${startDateTime}">${moment(startDateTime).format(`hh:mm`)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${endDatetime}">${moment(endDatetime).format(`hh:mm`)}</time>
+            <time class="event__end-time" datetime="${endDateTime}">${moment(endDateTime).format(`hh:mm`)}</time>
           </p>
           <p class="event__duration">${days ? days + `D` : ``} ${hours ? hours + `H` : ``} ${minutes ? minutes + `M` : ``}</p>
         </div>

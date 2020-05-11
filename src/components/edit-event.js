@@ -3,6 +3,7 @@ import flatpickr from "flatpickr";
 import 'flatpickr/dist/flatpickr.min.css';
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {EmptyEvent} from '../controllers/point-controller.js';
+import {getUpperCaseFirstLetter} from '../utils/common.js';
 import {CITIES, getRandomCities, getRandomDescription, getRandomPhotos, getRandomServices} from "../mock/event.js";
 
 import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY, Placeholder} from '../const.js';
@@ -12,7 +13,7 @@ const createEventsChooserMurkup = (choosers) => {
     return (`<div class="event__type-item">
       <input id="event-type-${typeTransport}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeTransport}"
       >
-      <label class="event__type-label  event__type-label--${typeTransport}" for="event-type-${typeTransport}-1">${typeTransport}</label>
+      <label class="event__type-label  event__type-label--${typeTransport}" for="event-type-${typeTransport}-1">${getUpperCaseFirstLetter(typeTransport)}</label>
     </div>`);
   }).join(`\n`);
 };
@@ -82,7 +83,7 @@ const createEditEventTemplate = (cardData, option) => {
         </div>
         <div class="event__field-group  event__field-group--destination">
         <label class="event__label  event__type-output" for="event-destination-1">
-              ${type} ${TRAVEL_TRANSPORT.includes(type) ? Placeholder.TRANSPORT : Placeholder.ACTION}
+              ${getUpperCaseFirstLetter(type)} ${TRAVEL_TRANSPORT.includes(type) ? Placeholder.TRANSPORT : Placeholder.ACTION}
             </label>
           <select class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">

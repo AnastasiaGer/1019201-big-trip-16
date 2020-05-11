@@ -1,131 +1,298 @@
 import AbstractSmartComponent from "./abstract-smart-component";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY, CURRENCY} from '../const.js';
 import moment from 'moment';
 
-const COLOR = `#ffffff`;
 const BAR_HEIGHT = 55;
+const ICON_SIZE = 20;
+const ICON_PADDING = ICON_SIZE;
 
 const getUniqItems = (item, index, array) => {
   return array.indexOf(item) === index;
 };
 
-const calcPriceUniqueActivity = (points, activity) => {
-  return points
-  .filter((point) => point.type === activity)
-  .reduce((total, point) =>
-    total + point.price, 0);
+const calcPriceUniqueActivity = (points, type) => {
+  let priceSum = 0;
+  const pointsCosts = points.reduce((acc, point) => {
+    if (point.type.toUpperCase() === type) {
+      priceSum += point.price;
+      acc[point.type.toUpperCase()] = priceSum;
+    }
+    return acc;
+  }, {});
+  return pointsCosts[type];
 };
 
-const calcUniqueActivity = (points, activity) => {
-  return points.filter((it) => it.type === activity).length;
+const calcUniqueActivity = (points, type) => {
+  return points.filter((point) => point.type.toUpperCase() === type).length;
 };
 
-const calcTimeUniqueActivity = (points, activity) => {
-  return points
-  .filter((point) => point.type === activity)
-  .reduce((total, point) =>
-    total + moment(point.end).diff(moment(point.start), `hours`, true), 0);
+const calcTimeUniqueActivity = (points, type) => {
+  let timeSum = 0;
+  const pointsTimeSpent = points.reduce((acc, point) => {
+    if (point.type.toUpperCase() === type) {
+      timeSum += moment(point.end).diff(moment(point.start), `hours`, true);
+      acc[point.type.toUpperCase()] = Math.round(timeSum);
+    }
+    return acc;
+  }, {});
+  return pointsTimeSpent[type];
 };
 
-const CHART_INFO = {
-  MONEY: {
-    name: `MONEY`,
-    remark: CURRENCY,
-    remarkPlace: `start`,
-    formula: calcPriceUniqueActivity
-  },
-  TRANSPORT: {
-    name: `TRANSPORT`,
-    remark: `x`,
-    remarkPlace: `end`,
-    formula: calcUniqueActivity,
-  },
-  TIME: {
-    name: `TIME SPENT`,
-    remark: `H`,
-    remarkPlace: `end`,
-    formula: calcTimeUniqueActivity
+const getPointsType = (points) => {
+  return points.map((point) => point.type.toUpperCase()).filter(getUniqItems);
+};
+
+const chartCallback = (animation) => {
+  const chart = animation.chart;
+  const axisY = chart.scales[`y-axis-0`];
+  const ticks = axisY.ticks;
+  const fontSize = axisY.options.ticks.fontSize;
+
+  if (axisY.getPixelForTick(ticks.length - 1)) {
+    ticks.forEach((tick, idx) => {
+
+      const onLoadImage = (evt) => {
+        const textParams = chart.ctx.font;
+        chart.ctx.textAlign = `center`;
+        chart.ctx.textBaseline = `bottom`;
+        chart.ctx.font = `normal ${fontSize}px sans-serif`;
+        const tickWidth = chart.ctx.measureText(tick).width;
+        chart.ctx.font = textParams;
+
+        const tickY = axisY.getPixelForTick(idx) - fontSize;
+        const tickX = axisY.right - tickWidth - ICON_SIZE - ICON_PADDING;
+
+        chart.ctx.drawImage(evt.target, tickX, tickY, ICON_SIZE, ICON_SIZE);
+        evt.target.removeEventListener(`load`, onLoadImage);
+      };
+
+      const tickIcon = new Image();
+      tickIcon.addEventListener(`load`, onLoadImage);
+      tickIcon.src = `img/icons/${tick.toLowerCase()}.png`;
+    });
   }
 };
 
-const getUpperCase = (lowerCaseArray) => lowerCaseArray.map((lowerCaseItem) =>lowerCaseItem.toUpperCase());
+const renderMoneyChart = (moneyCtx, points) => {
+  const pointTypes = getPointsType(points);
+  const pointsCosts = pointTypes.map((type) => calcPriceUniqueActivity(points, type));
 
-const renderChart = (colorCtx, points, array, details) => {
-  const activities = points
-    .map((event) => event.type)
-    .filter(getUniqItems);
-
-  colorCtx.height = BAR_HEIGHT * activities.length;
-
-  return new Chart(colorCtx, {
+  return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: getUpperCase(activities),
+      labels: pointTypes,
       datasets: [{
-        data: activities.map((activity) => details.formula(points, activity)),
-        backgroundColor: COLOR,
-      }],
+        data: pointsCosts,
+        backgroundColor: `#ffffff`,
+        hoverBackgroundColor: `#ffffff`,
+        anchor: `start`,
+        minBarLength: 50,
+        barThickness: 44
+      }]
     },
     options: {
-      title: {
-        display: true,
-        position: `left`,
-        text: details.name,
-        fontSize: 25,
-        fontColor: `#000000`
-      },
-      legend: {
-        display: false,
-      },
-      scales: {
-        xAxes: [{
-          gridLines: {
-            display: false,
-          },
-          ticks: {
-            min: 0,
-            display: false
-          }
-        }],
-        yAxes: [{
-          gridLines: {
-            display: false,
-          }
-        }]
-      },
+      events: [`click`],
       plugins: {
         datalabels: {
-          display: true,
+          font: {
+            size: 13
+          },
+          color: `#000000`,
           anchor: `end`,
-          align: `left`,
-          fontSize: `20px`,
-          fontWeight: `bold`,
-          formatter: (value) => {
-            return details.remarkPlace === `start` ? `${details.remark + ` ` + Math.round(value)}` : `${Math.round(value) + ` ` + details.remark}`;
-          }
-        }
-      }
-    },
-    tooltips: {
-      callbacks: {
-        label: (tooltipItem, data) => {
-          const allData = data.datasets[tooltipItem.datasetIndex].data;
-          const tooltipData = allData[tooltipItem.index];
-          return `${tooltipData}`;
+          align: `start`,
+          formatter: (val) => `€ ${val}`
         }
       },
-      displayColors: false,
-      backgroundColor: `red`,
-      bodyFontColor: `#000000`,
-      borderColor: COLOR,
-      borderWidth: 1,
-      cornerRadius: 0,
-      xPadding: 10,
-      yPadding: 10
+      title: {
+        display: true,
+        text: `MONEY`,
+        fontColor: `#000000`,
+        fontSize: 23,
+        position: `left`
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#000000`,
+            padding: 5,
+            fontSize: 13,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          }
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false,
+      },
+      animation: {
+        onProgress: chartCallback
+      }
+    }
+  });
+};
+
+const renderTransportChart = (transportCtx, points) => {
+  const pointTypes = getPointsType(points).filter((point) => point !== `RESTAURANT` && point !== `CHECK-IN` && point !== `SIGHTSEEING`);
+  const pointTypesCount = pointTypes.map((type) => calcUniqueActivity(points, type));
+
+  return new Chart(transportCtx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: pointTypes,
+      datasets: [{
+        data: pointTypesCount,
+        backgroundColor: `#ffffff`,
+        hoverBackgroundColor: `#ffffff`,
+        anchor: `start`,
+        minBarLength: 50,
+        barThickness: 44
+      }]
     },
+    options: {
+      events: [`click`],
+      plugins: {
+        datalabels: {
+          font: {
+            size: 13
+          },
+          color: `#000000`,
+          anchor: `end`,
+          align: `start`,
+          formatter: (val) => `${val}x`
+        }
+      },
+      title: {
+        display: true,
+        text: `TRANSPORT`,
+        fontColor: `#000000`,
+        fontSize: 23,
+        position: `left`
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#000000`,
+            padding: 5,
+            fontSize: 13,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          }
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false,
+      },
+      animation: {
+        onProgress: chartCallback
+      }
+    }
+  });
+};
+
+const renderTimeSpentChart = (timeSpentCtx, points) => {
+  const pointTypes = getPointsType(points);
+  const pointTypesTimeSpent = pointTypes.map((type) => calcTimeUniqueActivity(points, type));
+
+  return new Chart(timeSpentCtx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: pointTypes,
+      datasets: [{
+        data: pointTypesTimeSpent,
+        backgroundColor: `#ffffff`,
+        hoverBackgroundColor: `#ffffff`,
+        anchor: `start`,
+        minBarLength: 50,
+        barThickness: 44
+      }]
+    },
+    options: {
+      events: [`click`],
+      plugins: {
+        datalabels: {
+          font: {
+            size: 13
+          },
+          color: `#000000`,
+          anchor: `end`,
+          align: `start`,
+          formatter: (val) => `${val}H`
+        }
+      },
+      title: {
+        display: true,
+        text: `TIME SPENT`,
+        fontColor: `#000000`,
+        fontSize: 23,
+        position: `left`,
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#000000`,
+            padding: 5,
+            fontSize: 13,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          }
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false,
+      },
+      animation: {
+        onProgress: chartCallback
+      }
+    }
   });
 };
 
@@ -180,10 +347,14 @@ export default class Statistics extends AbstractSmartComponent {
     const transportCtx = element.querySelector(`.statistics__chart--transport`);
     const timeCtx = element.querySelector(`.statistics__chart--time`);
 
+    moneyCtx.height = BAR_HEIGHT * 7;
+    transportCtx.height = BAR_HEIGHT * 5;
+    timeCtx.height = BAR_HEIGHT * 7;
+
     this._resetCharts();
-    this._moneyChart = renderChart(moneyCtx, this._points.getEvents(), [...TRAVEL_TRANSPORT, ...TRAVEL_ACTIVITY], CHART_INFO.MONEY);
-    this._transportChart = renderChart(transportCtx, this._points.getEvents(), TRAVEL_TRANSPORT, CHART_INFO.TRANSPORT);
-    this._timeChart = renderChart(timeCtx, this._points.getEvents(), [...TRAVEL_TRANSPORT, ...TRAVEL_ACTIVITY], CHART_INFO.TIME);
+    this._moneyChart = renderMoneyChart(moneyCtx, this._points.getEvents());
+    this._transportChart = renderTransportChart(transportCtx, this._points.getEvents());
+    this._timeSpentChart = renderTimeSpentChart(timeCtx, this._points.getEvents());
   }
 
   _resetCharts() {
