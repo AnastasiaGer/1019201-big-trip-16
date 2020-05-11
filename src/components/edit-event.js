@@ -1,41 +1,29 @@
 import moment from "moment";
 import flatpickr from "flatpickr";
 import 'flatpickr/dist/flatpickr.min.css';
-
-import {EmptyEvent} from '../controllers/point-controller.js';
-import {clearString} from "../utils/common.js";
-import {actionByType} from "../const.js";
-import {CITIES, TYPES, getRandomDescription, getRandomPhotos, getRandomServices} from "../mock/event.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
+import {EmptyEvent} from '../controllers/point-controller.js';
+import {getUpperCaseFirstLetter} from '../utils/common.js';
+import {CITIES, getRandomCities, getRandomDescription, getRandomPhotos, getRandomServices} from "../mock/event.js";
 
-const getTypeTransport = (typesTransport) => {
-  return typesTransport.map((typeTransport) => {
-    return (
-      `<div class="event__type-item">
-         <input id="event-type-${typeTransport.toLowerCase().slice(0, -3)}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeTransport.toLowerCase().slice(0, -3)}">
-         <label class="event__type-label  event__type-label--${typeTransport.toLowerCase().slice(0, -3)}" for="event-type-${typeTransport.toLowerCase().slice(0, -3)}-1">${typeTransport.slice(0, -3)}</label>
-      </div>`
-    );
-  }).join(``);
-};
+import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY, Placeholder} from '../const.js';
 
-const getTypeActivity = (activities) => {
-  return activities.map((activity) => {
-    return (
-      `<div class="event__type-item">
-        <input id="event-type-${activity.toLowerCase().slice(0, -3)}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${activity.toLowerCase().slice(0, -3)}">
-        <label class="event__type-label  event__type-label--${activity.toLowerCase().slice(0, -3)}" for="event-type-${activity.toLowerCase().slice(0, -3)}-1">${activity.slice(0, -3)}</label>
-      </div>`
-    );
-  }).join(``);
+const createEventsChooserMurkup = (choosers) => {
+  return choosers.map((typeTransport) => {
+    return (`<div class="event__type-item">
+      <input id="event-type-${typeTransport}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeTransport}"
+      >
+      <label class="event__type-label  event__type-label--${typeTransport}" for="event-type-${typeTransport}-1">${getUpperCaseFirstLetter(typeTransport)}</label>
+    </div>`);
+  }).join(`\n`);
 };
 
 const getServices = (services) => {
   return services.map((service) => {
     return (`
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${service.type}-1" type="checkbox" name="event-offer-${service.type}" checked>
-        <label class="event__offer-label" for="event-offer-${service.type}-1">
+        <input class="event__offer-checkbox  visually-hidden" id="event-${service.title}" type="checkbox" name="event-${service.title}"  ${service.isChecked ? `checked` : ``}>
+        <label class="event__offer-label" for="event-${service.title}">
         <span class="event__offer-title">${service.title}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${service.price}</span>
@@ -51,8 +39,8 @@ const getPhotosList = (photos) => {
   }).join(``);
 };
 
-const getCities = (citiesName, elem) => {
-  return citiesName.map((cityName) => {
+const getCities = (cities, elem) => {
+  return cities.map((cityName) => {
     return (`<option value=${cityName} ${cityName === elem ? `selected` : ``}>${cityName}</option>`);
   }).join(``);
 };
@@ -68,8 +56,6 @@ const createEditEventTemplate = (cardData, option) => {
   const {type, city, description, photos, services} = option;
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
-  const typeTransport = getTypeTransport(TYPES[0]);
-  const typeActivity = getTypeActivity(TYPES[1]);
   const servicesList = getServices(services);
   const photosList = getPhotosList(photos);
   const citiesList = getCities(CITIES, city);
@@ -81,24 +67,24 @@ const createEditEventTemplate = (cardData, option) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${type.slice(0, -3)}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
           <div class="event__type-list">
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">Transfer</legend>
-               ${typeTransport}
-            </fieldset>
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">Activity</legend>
-              ${typeActivity}
-            </fieldset>
-          </div>
+              <fieldset class="event__type-group">
+                <legend class="visually-hidden">Transfer</legend>
+                ${createEventsChooserMurkup(TRAVEL_TRANSPORT)}
+              </fieldset>
+              <fieldset class="event__type-group">
+                <legend class="visually-hidden">Activity</legend>
+                ${createEventsChooserMurkup(TRAVEL_ACTIVITY)}
+              </fieldset>
+            </div>
         </div>
         <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-1">
-          ${type}
-          </label>
+        <label class="event__label  event__type-output" for="event-destination-1">
+              ${getUpperCaseFirstLetter(type)} ${TRAVEL_TRANSPORT.includes(type) ? Placeholder.TRANSPORT : Placeholder.ACTION}
+            </label>
           <select class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
           ${citiesList}
@@ -156,6 +142,10 @@ const createEditEventTemplate = (cardData, option) => {
       </section>
     </form>`
   );
+};
+
+const isDestinationInCitiesList = (citiesList, destination) => {
+  return citiesList.some((city) => city === destination);
 };
 
 export default class EditEvent extends AbstractSmartComponent {
@@ -235,9 +225,9 @@ export default class EditEvent extends AbstractSmartComponent {
   }
 
   setClickHandler(handler) {
-    const element = this.getElement().querySelector(`.event__rollup-btn`);
-    if (element) {
-      element.addEventListener(`click`, handler);
+    const editEventButton = this.getElement().querySelector(`.event__rollup-btn`);
+    if (editEventButton) {
+      editEventButton.addEventListener(`click`, handler);
       this._clickHandler = handler;
     }
   }
@@ -261,25 +251,33 @@ export default class EditEvent extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
+    const eventTypeButtons = element.querySelectorAll(`.event__type-input`);
+    const destinationInputs = element.querySelectorAll(`.event__input--destination`);
+    const submitButton = element.querySelector(`.event__save-btn`);
 
-    element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
+    eventTypeButtons.forEach((button) => {
+      button.addEventListener(`click`, (evt) => {
+        const type = evt.target.value;
 
-      this._type = actionByType.get(evt.target.value);
+        this._type = type[0].toUpperCase() + type.slice(1);
+        this._offers = getRandomServices();
+        this._city = getRandomCities();
+        this._description = getRandomDescription();
+        this._photos = getRandomPhotos();
 
-      this.rerender();
+        this.rerender();
+      });
     });
 
-    element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
-      this._city = evt.target.value;
-      this._description = getRandomDescription();
-      this._photos = getRandomPhotos();
-      this._services = getRandomServices();
 
-      this.rerender();
-    });
-
-    element.querySelector(`.event__input--price`).addEventListener(`input`, (evt) => {
-      evt.target.value = clearString(evt.target.value);
+    destinationInputs.forEach((input) => {
+      input.addEventListener(`change`, () => {
+        if (!isDestinationInCitiesList(CITIES, input.value)) {
+          submitButton.disabled = true;
+        } else {
+          submitButton.disabled = false;
+        }
+      });
     });
   }
 

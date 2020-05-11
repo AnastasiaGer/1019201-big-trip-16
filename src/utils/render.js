@@ -43,3 +43,14 @@ export const remove = (component) => {
   component.getElement().remove();
   component.removeElement();
 };
+
+export const createItems = (elementsData, getHtml) => {
+  const container = document.createDocumentFragment();
+  container.innerHTML = ``;
+
+  for (const elementData of elementsData) {
+    container.innerHTML += getHtml(elementData);
+  }
+
+  return container.innerHTML;
+};

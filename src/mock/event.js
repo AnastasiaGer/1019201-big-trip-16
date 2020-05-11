@@ -1,29 +1,12 @@
 // Создаст пустые моки для events. Передаст event на вход функции генерации разметки точек
 
 import {getRandomArrayItem, getRandomIntegerNumber} from "../utils/common.js";
-
+import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY} from '../const.js';
 export const EVENTS_AMOUNT = 20;
 const NUMBER_WEEK_DAYS = 7;
 const NUMBER_HOURS = 24;
 const TIME_FORMAT = 1000;
 const MINUTES_PER_HOUR = 60;
-
-export const TYPES = [
-  [
-    `Taxi to`,
-    `Bus to`,
-    `Train to`,
-    `Ship to`,
-    `Transport to`,
-    `Drive to`,
-    `Flight to`
-  ],
-  [
-    `Check-in in`,
-    `Sightseeing in`,
-    `Restaurant in`
-  ]
-];
 
 export const CITIES = [
   `Amsterdam`,
@@ -70,6 +53,10 @@ const DESCRIPTIONS = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
+export const getRandomCities = () => {
+  return CITIES[Math.floor(Math.random() * CITIES.length)];
+};
+
 export const getRandomPhotos = () => {
   const photos = [];
 
@@ -107,8 +94,8 @@ export const getRandomDate = () => {
 };
 
 const getRouteTypesArray = () => {
-  const routeTransportsArray = TYPES[0];
-  const routeActivitiesArray = TYPES[1];
+  const routeTransportsArray = TRAVEL_TRANSPORT;
+  const routeActivitiesArray = TRAVEL_ACTIVITY;
   const routeTypesArray = routeTransportsArray.concat(routeActivitiesArray);
 
   return routeTypesArray;

@@ -1,3 +1,4 @@
+import moment from 'moment';
 const MINUTES_PER_HOUR = 60;
 
 export const getRandomArrayItem = (array) => {
@@ -8,6 +9,10 @@ export const getRandomArrayItem = (array) => {
 
 export const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(max * Math.random());
+};
+
+export const getDurationDate = (start, end) => {
+  return moment.duration(moment(end).diff(moment(start)));
 };
 
 export const getDurationTime = (timeInMs) => {
@@ -26,4 +31,10 @@ export const getDurationTime = (timeInMs) => {
 
 export const clearString = (str) => {
   return str.replace(/[^+\d]/g, ``);
+};
+
+export const getUpperCaseFirstLetter = (type) => {
+  return (
+    type[0].toUpperCase() + type.slice(1, type.length)
+  );
 };
