@@ -79,11 +79,12 @@ export default class TripController {
   }
 
   createPoint() {
+    const dayListElement = this._container.querySelector(`.trip-days`);
     if (this._creatingPoint) {
       return;
     }
 
-    this._creatingPoint = new PointController(this._container, this._onDataChange, this._onViewChange);
+    this._creatingPoint = new PointController(dayListElement, this._onDataChange, this._onViewChange);
     this._creatingPoint.render(EmptyEvent, PointControllerMode.CREATING);
     this._onViewChange();
   }

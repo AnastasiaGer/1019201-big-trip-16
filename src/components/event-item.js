@@ -1,5 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 import moment from "moment";
+import {TRAVEL_TRANSPORT, Placeholder} from '../const.js';
 
 
 const getServices = (services) => {
@@ -18,7 +19,6 @@ const createEventTemplate = (event) => {
 
   const {type, city, price, services, startDate, endDate} = event;
 
-  const isMove = [`Check-in`, `Sightseeing`, `Restaurant`].some((item) => item === type) ? `in` : `to`;
   const isArrive = !!services;
 
   const duration = moment.duration(moment(endDate).diff(moment(startDate)));
@@ -35,7 +35,7 @@ const createEventTemplate = (event) => {
         <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${isMove} ${city}</h3>
+        <h3 class="event__title">${type}  ${TRAVEL_TRANSPORT.includes(type) ? Placeholder.TRANSPORT : Placeholder.ACTION} ${city}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${startDatetime}">${moment(startDatetime).format(`hh:mm`)}</time>

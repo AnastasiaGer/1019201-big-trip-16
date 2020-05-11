@@ -53,3 +53,8 @@ export const TRAVEL_ACTIVITY = [
   `sightseeing`,
   `restaurant`
 ];
+
+export const Placeholder = {
+  TRANSPORT: `to`,
+  ACTION: `in`,
+};

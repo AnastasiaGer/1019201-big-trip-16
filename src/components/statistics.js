@@ -50,6 +50,8 @@ const CHART_INFO = {
   }
 };
 
+const getUpperCase = (lowerCaseArray) => lowerCaseArray.map((lowerCaseItem) =>lowerCaseItem.toUpperCase());
+
 const renderChart = (colorCtx, points, array, details) => {
   const activities = points
     .map((event) => event.type)
@@ -61,7 +63,7 @@ const renderChart = (colorCtx, points, array, details) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: activities,
+      labels: getUpperCase(activities),
       datasets: [{
         data: activities.map((activity) => details.formula(points, activity)),
         backgroundColor: COLOR,
