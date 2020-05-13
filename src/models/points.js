@@ -43,7 +43,7 @@ export default class PointsModel {
   }
 
 
-  updateEvent(id, point) {
+  updatePoint(id, point) {
     const index = this._points.findIndex((it) => it.id === id);
 
     if (index === -1) {
@@ -57,7 +57,7 @@ export default class PointsModel {
     return true;
   }
 
-  addEvent(point) {
+  addPoint(point) {
     this._points = [].concat(point, this._points);
     this._callHandlers(this._dataChangeHandlers);
   }

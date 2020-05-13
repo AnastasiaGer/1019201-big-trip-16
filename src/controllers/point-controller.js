@@ -150,7 +150,6 @@ export default class PointController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     replace(this._eventComponent, this._eventEditComponent);
     this._mode = Mode.DEFAULT;
-
   }
 
   _onEscKeyDown(evt) {
