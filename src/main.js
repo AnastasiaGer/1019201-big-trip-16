@@ -32,7 +32,7 @@ const init = () => {
   const filterController = new FilterController(tripControls, pointsModel);
   filterController.render();
 
-  const tripController = new TripController(tripEvents, pointsModel);
+  const tripController = new TripController(tripEvents, pointsModel, api);
 
   document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
     tripController.createPoint();
