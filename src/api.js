@@ -1,5 +1,12 @@
 import Event from "./models/event.js";
 
+const Method = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
     return response;
@@ -9,33 +16,36 @@ const checkStatus = (response) => {
 };
 
 const API = class {
-  constructor(authorization) {
+  constructor(endPoint, authorization) {
+    this._endPoint = endPoint;
     this._authorization = authorization;
   }
 
   getEvents() {
-    const headers = new Headers();
-    headers.append(`Authorization`, this._authorization);
-
-    return fetch(`https://11.ecmascript.pages.academy/big-trip/events`, {headers})
-    .then(checkStatus)
+    return this._load({url: `events`})
     .then((response) => response.json())
     .then(Event.parseEvents);
   }
 
   updateEvent(id, data) {
-    const headers = new Headers();
-    headers.append(`Authorization`, this._authorization);
-    headers.append(`Content-Type`, `application/json`);
-
-    return fetch(`https://11.ecmascript.pages.academy/big-trip/events/${id}`, {
-      method: `PUT`,
+    return this._load({
+      url: `tasks/${id}`,
+      method: Method.PUT,
       body: JSON.stringify(data.toRAW()),
-      headers,
+      headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(checkStatus)
       .then((response) => response.json())
       .then(Event.parseEvent);
+  }
+
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+    headers.append(`Authorization`, this._authorization);
+
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+      .then(checkStatus)
+      .catch((err) => {
+        throw err;
+      });
   }
 };
 

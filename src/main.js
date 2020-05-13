@@ -12,8 +12,9 @@ import Statistics from "./components/statistics.js";
 import API from "./api.js";
 
 const AUTHORIZATION = `Basic nkfdkjndfnjkdfbiuh=`;
+const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 
-const api = new API(AUTHORIZATION);
+const api = new API(END_POINT, AUTHORIZATION);
 const tripInfoBlock = document.querySelector(`.trip-main`);
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 const tripEvents = document.querySelector(`.trip-events`);
