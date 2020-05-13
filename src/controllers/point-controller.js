@@ -3,7 +3,7 @@ import EditEvent from "../components/edit-event.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 import moment from "moment";
 import {getRandomDate} from "../mock/event.js";
-
+import Event from "./models/event.js";
 
 export const Mode = {
   DEFAULT: `default`,
@@ -24,15 +24,18 @@ export const EmptyEvent = {
   isFavorite: false
 };
 
-const parseFormData = (formData) => {
-  return {
-    city: formData.get(`event-destination`),
-    start: moment(formData.get(`event-start-time`), `DD/MM/YYYY HH:mm`),
-    end: moment(formData.get(`event-end-time`), `DD/MM/YYYY HH:mm`),
-    price: formData.get(`event-price`)
-  };
-};
 
+const parseFormData = (formData) => {
+  return new Event({
+    "type": formData.get(`event-type`),
+    "date_from": moment(formData.get(`event-start-time`), `DD/MM/YYYY HH:mm`),
+    "date_to": moment(formData.get(`event-end-time`), `DD/MM/YYYY HH:mm`),
+    "base_price": formData.get(`event-price`),
+    "is_favorite": Boolean(formData.get(`event-favorite`)),
+    "city": formData.get(`event-destination`),
+    // "offers": getSelectedOptions(formData),
+  });
+};
 
 export default class PointController {
   constructor(container, onDataChange, onViewChange) {
@@ -64,7 +67,7 @@ export default class PointController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      const formData = this._eventEditComponent.getData();
+      const formData = this._taskEditComponent.getData();
       const data = parseFormData(formData);
 
       this._onDataChange(this, event, Object.assign({}, event, data));
@@ -74,9 +77,11 @@ export default class PointController {
     this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
 
     this._eventEditComponent.setFavoritesButtonClickHandler(() => {
-      this._onDataChange(this, event, Object.assign({}, event, {
-        isFavorite: !event.isFavorite,
-      }));
+      const newEvent = Event.clone(event);
+      newEvent.isFavorite = !newEvent.isFavorite;
+
+      this._onDataChange(this, event, newEvent);
+
       this._mode = Mode.EDIT;
     });
 

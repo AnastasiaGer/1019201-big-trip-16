@@ -13,6 +13,20 @@ export default class Event {
     this.photos = new Array(data[`pictures`] || []);
   }
 
+  toRAW() {
+    return {
+      'id': this.id,
+      'is_favorite': this.isFavorite,
+      'type': this.eventType,
+      'date_from': this.eventStart,
+      'date_to': this.eventEnd,
+      'base_price': this.cost,
+      'destination': this.destination,
+      'offers': this.options,
+      'pictures': this.photos,
+    };
+  }
+
 
   static parseEvent(data) {
     return new Event(data);
@@ -20,5 +34,9 @@ export default class Event {
 
   static parseEvents(data) {
     return data.map(Event.parseEvent);
+  }
+
+  static clone(data) {
+    return new Event(data.toRAW());
   }
 }
