@@ -4,7 +4,6 @@ import 'flatpickr/dist/flatpickr.min.css';
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {EmptyEvent} from '../controllers/point-controller.js';
 import {getUpperCaseFirstLetter, clearString} from '../utils/common.js';
-import Point from "../models/point.js";
 
 import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY, Placeholder} from '../const.js';
 import Store from '../models/store.js';
@@ -41,7 +40,7 @@ const getOffers = (offers) => {
 
 const getPhotosList = (photos) => {
   return photos.map((photo) => {
-    return (`<img class="event__photo" src="${photo}" alt="Event photo">`);
+    return (`<img class="event__photo" src="${photo.src}" alt="${photo.description}">`);
   }).join(``);
 };
 
@@ -65,8 +64,6 @@ const createEditEventTemplate = (point, options) => {
 
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
-  const typeTransport = createEventsChooserMurkup(TRAVEL_TRANSPORT);
-  const typeActivity = createEventsChooserMurkup(TRAVEL_ACTIVITY);
   const offersList = getOffers(offers);
   const photosList = getPhotosList(photos);
   const citiesList = getCities(cities, city);
@@ -87,18 +84,18 @@ const createEditEventTemplate = (point, options) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Transfer</legend>
-               ${typeTransport}
+              ${createEventsChooserMurkup(TRAVEL_TRANSPORT)}
             </fieldset>
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Activity</legend>
-              ${typeActivity}
+              ${createEventsChooserMurkup(TRAVEL_ACTIVITY)}
             </fieldset>
           </div>
         </div>
         <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-1">
-          ${getUpperCaseFirstLetter(type)} ${Placeholder[getUpperCaseFirstLetter(type)]}
-          </label>
+        <label class="event__label  event__type-output" for="event-destination-1">
+        ${getUpperCaseFirstLetter(type)} ${TRAVEL_TRANSPORT.includes(type) ? Placeholder.TRANSPORT : Placeholder.ACTION}
+      </label>
           <select class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
           ${citiesList}
@@ -246,9 +243,9 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   setClickHandler(handler) {
-    const element = this.getElement().querySelector(`.event__rollup-btn`);
-    if (element) {
-      element.addEventListener(`click`, handler);
+    const editEventButton = this.getElement().querySelector(`.event__rollup-btn`);
+    if (editEventButton) {
+      editEventButton.addEventListener(`click`, handler);
       this._clickHandler = handler;
     }
   }
@@ -291,15 +288,15 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._type = evt.target.value;
-      this._offers = Point.getOffers().find((offer) => offer.type === this._type).offers;
+      this._offers = Store.getOffers().find((offer) => offer.type === this._type).offers;
 
       this.rerender();
     });
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
       this._city = evt.target.value;
-      this._photos = Point.getDestinations().find((destination) => destination.name === this._city).pictures;
-      this._description = Point.getDestinations().find((destination) => destination.name === this._city).description;
+      this._photos = Store.getDestinations().find((destination) => destination.name === this._city).pictures;
+      this._description = Store.getDestinations().find((destination) => destination.name === this._city).description;
 
       this.rerender();
     });

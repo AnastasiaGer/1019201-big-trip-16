@@ -86,7 +86,7 @@ export default class PointController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      const formData = this._taskEditComponent.getData();
+      const formData = this._eventEditComponent.getData();
       const data = parseFormData(formData);
       this._eventEditComponent.disableForm();
       this._eventEditComponent.setData({
