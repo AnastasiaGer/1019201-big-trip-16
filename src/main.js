@@ -11,7 +11,9 @@ import {generateTabs} from "./mock/filters-tabs.js";
 import Statistics from "./components/statistics.js";
 import API from "./api.js";
 
-const api = new API();
+const AUTHORIZATION = `Basic nkfdkjndfnjkdfbiuh=`;
+
+const api = new API(AUTHORIZATION);
 const tripInfoBlock = document.querySelector(`.trip-main`);
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 const tripEvents = document.querySelector(`.trip-events`);
