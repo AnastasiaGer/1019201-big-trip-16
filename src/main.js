@@ -2,7 +2,7 @@ import TripController from "./controllers/trip-controller.js";
 // import TripCost from "./components/trip-cost.js";
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
 import PointsModel from "./models/points.js";
-// import TripInfo from "./components/trip-info.js";
+import TripInfoController from './controllers/trip-info.js';
 // import TripRoute from "./components/trip-route.js";
 // import {cardsList, datesList} from "./mock/event.js";
 import {render, RenderPosition} from "./utils/render.js";
@@ -15,7 +15,7 @@ const AUTHORIZATION = `Basic nkfdkjndfnjkdfbiuh=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 
 
-// const tripInfoBlock = document.querySelector(`.trip-main`);
+const tripInfoBlock = document.querySelector(`.trip-main`);
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 const tripEvents = document.querySelector(`.trip-events`);
 const siteMainElement = document.querySelector(`.page-main .page-body__container`);
@@ -34,6 +34,8 @@ const init = () => {
   render(tripControls, tripTabsComponent, RenderPosition.AFTERBEGIN);
   filterController.render();
 
+  const tripInfoController = new TripInfoController(tripInfoBlock, pointsModel);
+  tripInfoController.render();
 
   document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
     tripController.createPoint();
