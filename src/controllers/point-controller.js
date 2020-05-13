@@ -3,7 +3,8 @@ import EditEvent from "../components/edit-event.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 import moment from "moment";
 import {getRandomDate} from "../mock/event.js";
-import Event from "./models/event.js";
+import Point from "../models/point.js";
+import Store from '../models/store.js';
 
 export const Mode = {
   DEFAULT: `default`,
@@ -26,14 +27,32 @@ export const EmptyEvent = {
 
 
 const parseFormData = (formData) => {
-  return new Event({
-    "type": formData.get(`event-type`),
-    "date_from": moment(formData.get(`event-start-time`), `DD/MM/YYYY HH:mm`),
-    "date_to": moment(formData.get(`event-end-time`), `DD/MM/YYYY HH:mm`),
-    "base_price": formData.get(`event-price`),
-    "is_favorite": Boolean(formData.get(`event-favorite`)),
-    "city": formData.get(`event-destination`),
-    // "offers": getSelectedOptions(formData),
+  const selectedOffers = [
+    ...document.querySelectorAll(`.event__offer-checkbox:checked + label[for^="event"]`)
+  ];
+
+  const destination = Store.getDestinations().find((city) => city.name === formData.get(`event-destination`));
+
+  return new Point({
+    'base_price': Number(formData.get(`event-price`)),
+    'date_from': new Date(
+        moment(formData.get(`event-start-time`), `DD/MM/YYYY HH:mm`).valueOf()
+    ).toISOString(),
+    'date_to': new Date(
+        moment(formData.get(`event-end-time`), `DD/MM/YYYY HH:mm`).valueOf()
+    ).toISOString(),
+    'destination': {
+      'description': destination.description,
+      'name': destination.name,
+      'pictures': destination.pictures
+    },
+    'id': `0`,
+    'is_favorite': formData.get(`event-favorite`) ? true : false,
+    'offers': selectedOffers.map((offer) => ({
+      'title': offer.querySelector(`.event__offer-title`).textContent,
+      'price': Number(offer.querySelector(`.event__offer-price`).textContent)
+    })),
+    'type': formData.get(`event-current-type`)
   });
 };
 
@@ -69,18 +88,29 @@ export default class PointController {
       evt.preventDefault();
       const formData = this._taskEditComponent.getData();
       const data = parseFormData(formData);
+      this._eventEditComponent.disableForm();
+      this._eventEditComponent.setData({
+        saveButtonText: `Saving...`,
+      });
 
-      this._onDataChange(this, event, Object.assign({}, event, data));
+      this._onDataChange(this, event, data);
+      this._eventEditComponent.activeForm();
       this. _replaceEditToEvent();
     });
 
-    this._eventEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
+    this._eventEditComponent.setDeleteButtonClickHandler(() => {
+      this._eventEditComponent.setData({
+        deleteButtonText: `Deleting...`,
+      });
+
+      this._onDataChange(this, event, null);
+    });
 
     this._eventEditComponent.setFavoritesButtonClickHandler(() => {
-      const newEvent = Event.clone(event);
-      newEvent.isFavorite = !newEvent.isFavorite;
+      const newPoint = Point.clone(event);
+      newPoint.isFavorite = !newPoint.isFavorite;
 
-      this._onDataChange(this, event, newEvent);
+      this._onDataChange(this, event, newPoint);
 
       this._mode = Mode.EDIT;
     });

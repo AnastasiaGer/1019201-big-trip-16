@@ -3,10 +3,16 @@ import flatpickr from "flatpickr";
 import 'flatpickr/dist/flatpickr.min.css';
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {EmptyEvent} from '../controllers/point-controller.js';
-import {getUpperCaseFirstLetter} from '../utils/common.js';
-import {CITIES, getRandomCities, getRandomDescription, getRandomPhotos, getRandomServices} from "../mock/event.js";
+import {getUpperCaseFirstLetter, clearString} from '../utils/common.js';
+import Point from "../models/point.js";
 
 import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY, Placeholder} from '../const.js';
+import Store from '../models/store.js';
+
+const DefaultData = {
+  deleteButtonText: `Delete`,
+  saveButtonText: `Save`,
+};
 
 const createEventsChooserMurkup = (choosers) => {
   return choosers.map((typeTransport) => {
@@ -18,15 +24,15 @@ const createEventsChooserMurkup = (choosers) => {
   }).join(`\n`);
 };
 
-const getServices = (services) => {
-  return services.map((service) => {
+const getOffers = (offers) => {
+  return offers.map((offer) => {
     return (`
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-${service.title}" type="checkbox" name="event-${service.title}"  ${service.isChecked ? `checked` : ``}>
-        <label class="event__offer-label" for="event-${service.title}">
-        <span class="event__offer-title">${service.title}</span>
+        <input class="event__offer-checkbox  visually-hidden" id="event-${offer.title}" type="checkbox" name="event-${offer.title}"  ${offer.isChecked ? `checked` : ``}>
+        <label class="event__offer-label" for="event-${offer.title}">
+        <span class="event__offer-title">${offer.title}</span>
         &plus;
-        &euro;&nbsp;<span class="event__offer-price">${service.price}</span>
+        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
         </label>
       </div>`
     );
@@ -41,50 +47,58 @@ const getPhotosList = (photos) => {
 
 const getCities = (cities, elem) => {
   return cities.map((cityName) => {
-    return (`<option value=${cityName} ${cityName === elem ? `selected` : ``}>${cityName}</option>`);
+    return (`<option value="${cityName}" ${cityName === elem ? `selected` : ``}>${cityName}</option>`);
   }).join(``);
 };
 
-const createEditEventTemplate = (cardData, option) => {
+const createEditEventTemplate = (point, options) => {
+
+  const {start, end, price, isFavorite, index} = point;
+  const {type, city, description, photos, offers, externalData} = options;
 
   let creatingPoint = false;
 
-  if (cardData === EmptyEvent) {
+  if (point === EmptyEvent) {
     creatingPoint = true;
   }
-  const {start, end, price, isFavorite, index} = cardData;
-  const {type, city, description, photos, services} = option;
+  const cities = Store.getDestinations().map((destination) => destination.name);
+
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
-  const servicesList = getServices(services);
+  const typeTransport = createEventsChooserMurkup(TRAVEL_TRANSPORT);
+  const typeActivity = createEventsChooserMurkup(TRAVEL_ACTIVITY);
+  const offersList = getOffers(offers);
   const photosList = getPhotosList(photos);
-  const citiesList = getCities(CITIES, city);
+  const citiesList = getCities(cities, city);
   const isFavourite = isFavorite ? `checked` : ``;
+  const deleteButtonText = externalData.deleteButtonText;
+  const saveButtonText = externalData.saveButtonText;
 
   return (
     `<form class="event  event--edit" action="#" method="post">
       <header class="event__header">
+      <input class="visually-hidden" name="event-current-type" id="event-current-type-name" value="${type}">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+          <input class="event__type-toggle visually-hidden" id="event-type-toggle-1" type="checkbox">
           <div class="event__type-list">
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">Transfer</legend>
-                ${createEventsChooserMurkup(TRAVEL_TRANSPORT)}
-              </fieldset>
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">Activity</legend>
-                ${createEventsChooserMurkup(TRAVEL_ACTIVITY)}
-              </fieldset>
-            </div>
+            <fieldset class="event__type-group">
+              <legend class="visually-hidden">Transfer</legend>
+               ${typeTransport}
+            </fieldset>
+            <fieldset class="event__type-group">
+              <legend class="visually-hidden">Activity</legend>
+              ${typeActivity}
+            </fieldset>
+          </div>
         </div>
         <div class="event__field-group  event__field-group--destination">
-        <label class="event__label  event__type-output" for="event-destination-1">
-              ${getUpperCaseFirstLetter(type)} ${TRAVEL_TRANSPORT.includes(type) ? Placeholder.TRANSPORT : Placeholder.ACTION}
-            </label>
+          <label class="event__label  event__type-output" for="event-destination-1">
+          ${getUpperCaseFirstLetter(type)} ${Placeholder[getUpperCaseFirstLetter(type)]}
+          </label>
           <select class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
           ${citiesList}
@@ -109,8 +123,8 @@ const createEditEventTemplate = (cardData, option) => {
           </label>
           <input class="event__input  event__input--price" id="event-price-${index}"  type="text" name="event-price" maxlength="5" value="${price}">
         </div>
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${creatingPoint ? `Cancel` : `Delete`}</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
+        <button class="event__reset-btn" type="reset">${creatingPoint ? `Cancel` : deleteButtonText}</button>
         <input id="event-favorite-${index}" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite}>
         <label class="event__favorite-btn ${creatingPoint ? `visually-hidden` : ``}" for="event-favorite-${index}">
           <span class="visually-hidden">Add to favorite</span>
@@ -123,42 +137,43 @@ const createEditEventTemplate = (cardData, option) => {
           <span class="visually-hidden">Open event</span>
         </button>`}
       </header>
-      <section class="event__details">
-        <section class="event__section  event__section--offers">
+      ${offers.length > 0 || description.length > 0 ?
+      `<section class="event__details">
+        ${offers.length > 0 ?
+      `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
-          ${servicesList}
+          ${offersList}
           </div>
-        </section>
-        <section class="event__section  event__section--destination">
+        </section>` : ``}
+        ${description.length > 0 ?
+      `<section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
-          <div class="event__photos-container">
+          ${photos.length > 0 ?
+      `<div class="event__photos-container">
             <div class="event__photos-tape">
             ${photosList}
             </div>
-          </div>
-        </section>
-      </section>
+          </div>` : ``}
+        </section>` : ``}
+      </section>` : ``}
     </form>`
   );
 };
 
-const isDestinationInCitiesList = (citiesList, destination) => {
-  return citiesList.some((city) => city === destination);
-};
-
-export default class EditEvent extends AbstractSmartComponent {
-  constructor(cardData) {
+export default class EventEdit extends AbstractSmartComponent {
+  constructor(point) {
     super();
 
-    this._cardData = cardData;
-    this._type = cardData.type;
-    this._city = cardData.city;
-    this._description = cardData.description;
-    this._photos = cardData.photos;
-    this._services = cardData.services;
-
+    this._point = point;
+    this._type = point.type;
+    this._city = point.city;
+    this._price = point.price;
+    this._description = point.description;
+    this._offers = [...point.offers];
+    this._photos = [...point.photos];
+    this._externalData = DefaultData;
     this._element = null;
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -172,13 +187,19 @@ export default class EditEvent extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEditEventTemplate(this._cardData, {
+    return createEditEventTemplate(this._point, {
       type: this._type,
       city: this._city,
       description: this._description,
-      services: this._services,
-      photos: this._photos
+      offers: this._offers,
+      photos: this._photos,
+      externalData: this._externalData
     });
+  }
+
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
+    this.rerender();
   }
 
   getData() {
@@ -213,21 +234,21 @@ export default class EditEvent extends AbstractSmartComponent {
   }
 
   reset() {
-    const cardData = this._cardData;
+    const point = this._point;
 
-    this._type = cardData.type;
-    this._city = cardData.city;
-    this._description = cardData.description;
-    this._photos = cardData.photos;
-    this._services = cardData.services;
+    this._type = point.type;
+    this._city = point.city;
+    this._description = point.description;
+    this._photos = point.photos;
+    this._offers = point.offers;
 
     this.rerender();
   }
 
   setClickHandler(handler) {
-    const editEventButton = this.getElement().querySelector(`.event__rollup-btn`);
-    if (editEventButton) {
-      editEventButton.addEventListener(`click`, handler);
+    const element = this.getElement().querySelector(`.event__rollup-btn`);
+    if (element) {
+      element.addEventListener(`click`, handler);
       this._clickHandler = handler;
     }
   }
@@ -249,35 +270,42 @@ export default class EditEvent extends AbstractSmartComponent {
     this._favoritesClickHandler = handler;
   }
 
+  disableForm() {
+    const form = this.getElement();
+    const elements = Array.from(form.elements);
+    elements.forEach((elm) => {
+      elm.readOnly = true;
+    });
+  }
+
+  activeForm() {
+    const form = this.getElement();
+    const elements = Array.from(form.elements);
+    elements.forEach((elm) => {
+      elm.readOnly = false;
+    });
+  }
+
   _subscribeOnEvents() {
     const element = this.getElement();
-    const eventTypeButtons = element.querySelectorAll(`.event__type-input`);
-    const destinationInputs = element.querySelectorAll(`.event__input--destination`);
-    const submitButton = element.querySelector(`.event__save-btn`);
 
-    eventTypeButtons.forEach((button) => {
-      button.addEventListener(`click`, (evt) => {
-        const type = evt.target.value;
+    element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
+      this._type = evt.target.value;
+      this._offers = Point.getOffers().find((offer) => offer.type === this._type).offers;
 
-        this._type = type[0].toUpperCase() + type.slice(1);
-        this._offers = getRandomServices();
-        this._city = getRandomCities();
-        this._description = getRandomDescription();
-        this._photos = getRandomPhotos();
-
-        this.rerender();
-      });
+      this.rerender();
     });
 
+    element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
+      this._city = evt.target.value;
+      this._photos = Point.getDestinations().find((destination) => destination.name === this._city).pictures;
+      this._description = Point.getDestinations().find((destination) => destination.name === this._city).description;
 
-    destinationInputs.forEach((input) => {
-      input.addEventListener(`change`, () => {
-        if (!isDestinationInCitiesList(CITIES, input.value)) {
-          submitButton.disabled = true;
-        } else {
-          submitButton.disabled = false;
-        }
-      });
+      this.rerender();
+    });
+
+    element.querySelector(`.event__input--price`).addEventListener(`input`, (evt) => {
+      evt.target.value = clearString(evt.target.value);
     });
   }
 
@@ -290,15 +318,16 @@ export default class EditEvent extends AbstractSmartComponent {
     }
 
     const element = this.getElement();
+
     const options = {
       allowInput: true,
       dateFormat: `d/m/y H:i`,
-      minDate: this._cardData.start,
+      minDate: this._point.start,
       enableTime: true
     };
 
-    this._flatpickrStartDate = flatpickr(element.querySelector(`#event-start-time-1`), Object.assign({}, options, {defaultDate: this._cardData.start}));
+    this._flatpickrStartDate = flatpickr(element.querySelector(`#event-start-time-1`), Object.assign({}, options, {defaultDate: this._point.start}));
 
-    this._flatpickrEndDate = flatpickr(element.querySelector(`#event-end-time-1`), Object.assign({}, options, {defaultDate: this._cardData.end}));
+    this._flatpickrEndDate = flatpickr(element.querySelector(`#event-end-time-1`), Object.assign({}, options, {defaultDate: this._point.end}));
   }
 }

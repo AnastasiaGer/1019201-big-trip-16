@@ -1,4 +1,5 @@
-import Event from "./models/event.js";
+import Point from "./models/point.js";
+import Store from './models/store.js';
 
 const Method = {
   GET: `GET`,
@@ -15,27 +16,54 @@ const checkStatus = (response) => {
   }
 };
 
-const API = class {
+export default class API {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
   }
 
-  getEvents() {
-    return this._load({url: `events`})
-    .then((response) => response.json())
-    .then(Event.parseEvents);
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then((response) => response.json())
+      .then(Store.setDestinations);
   }
 
-  updateEvent(id, data) {
+  getOffers() {
+    return this._load({url: `offers`})
+      .then((response) => response.json())
+      .then(Store.setOffers);
+  }
+
+  getPoints() {
+    return this._load({url: `points`})
+    .then((response) => response.json())
+    .then(Point.parsePoints);
+  }
+
+  createPoint(point) {
     return this._load({
-      url: `tasks/${id}`,
+      url: `points`,
+      method: Method.POST,
+      body: JSON.stringify(point.toRAW()),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json())
+      .then(Point.parsePoint);
+  }
+
+  updatePoint(id, data) {
+    return this._load({
+      url: `points/${id}`,
       method: Method.PUT,
       body: JSON.stringify(data.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then((response) => response.json())
-      .then(Event.parseEvent);
+      .then(Point.parsePoint);
+  }
+
+  deletePoint(id) {
+    return this._load({url: `points/${id}`, method: Method.DELETE});
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
@@ -47,6 +75,4 @@ const API = class {
         throw err;
       });
   }
-};
-
-export default API;
+}
