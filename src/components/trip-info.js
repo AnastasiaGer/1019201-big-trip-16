@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 
-const TRIP_LENGTH = {
+const TripLength = {
   ZERO: 0,
   ONE: 1,
   TWO: 2,
@@ -14,16 +14,16 @@ const getTotalCost = (points) => {
 const getCitiesRoute = (points) => {
   let pointsLength = 0;
   switch (points.length) {
-    case TRIP_LENGTH.ZERO:
+    case TripLength.ZERO:
       pointsLength = ``;
       break;
-    case TRIP_LENGTH.ONE:
+    case TripLength.ONE:
       pointsLength = points[0].city;
       break;
-    case TRIP_LENGTH.TWO:
+    case TripLength.TWO:
       pointsLength = points[0].city + `\u00A0\u2013\u00A0` + points[points.length - 1].city;
       break;
-    case TRIP_LENGTH.THREE:
+    case TripLength.THREE:
       pointsLength = points[0].city + `\u00A0\u2013\u00A0` + points[1].city + `\u00A0\u2013\u00A0` + points[points.length - 1].city;
       break;
     default:
