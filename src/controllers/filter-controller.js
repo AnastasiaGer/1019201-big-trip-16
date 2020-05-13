@@ -20,7 +20,7 @@ export default class FilterController {
 
   render() {
     const container = this._container;
-    const allEvents = this._pointsModel.getEventsAll();
+    const allEvents = this._pointsModel.getPointsAll();
 
     const filters = Object.values(FILTER_TYPE).map((filterType) => {
       return {

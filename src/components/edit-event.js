@@ -1,11 +1,10 @@
-import moment from "moment";
-import flatpickr from "flatpickr";
 import 'flatpickr/dist/flatpickr.min.css';
-import AbstractSmartComponent from "./abstract-smart-component.js";
 import {EmptyEvent} from '../controllers/point-controller.js';
 import {getUpperCaseFirstLetter, clearString} from '../utils/common.js';
-
 import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY, Placeholder} from '../const.js';
+import AbstractSmartComponent from "./abstract-smart-component.js";
+import flatpickr from "flatpickr";
+import moment from "moment";
 import Store from '../models/store.js';
 
 const DefaultData = {
@@ -44,8 +43,8 @@ const getPhotosList = (photos) => {
   }).join(``);
 };
 
-const getCities = (cities, elem) => {
-  return cities.map((cityName) => {
+const getCities = (citiesName, elem) => {
+  return citiesName.map((cityName) => {
     return (`<option value="${cityName}" ${cityName === elem ? `selected` : ``}>${cityName}</option>`);
   }).join(``);
 };
@@ -60,6 +59,7 @@ const createEditEventTemplate = (point, options) => {
   if (point === EmptyEvent) {
     creatingPoint = true;
   }
+
   const cities = Store.getDestinations().map((destination) => destination.name);
 
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
@@ -168,9 +168,10 @@ export default class EventEdit extends AbstractSmartComponent {
     this._city = point.city;
     this._price = point.price;
     this._description = point.description;
-    this._offers = [...point.offers];
-    this._photos = [...point.photos];
+    this._offers = point.offers;
+    this._photos = point.photos;
     this._externalData = DefaultData;
+
     this._element = null;
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -194,14 +195,14 @@ export default class EventEdit extends AbstractSmartComponent {
     });
   }
 
-  setData(data) {
-    this._externalData = Object.assign({}, DefaultData, data);
-    this.rerender();
-  }
-
   getData() {
     const form = this.getElement();
     return new FormData(form);
+  }
+
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
+    this.rerender();
   }
 
   removeElement() {
@@ -243,9 +244,9 @@ export default class EventEdit extends AbstractSmartComponent {
   }
 
   setClickHandler(handler) {
-    const editEventButton = this.getElement().querySelector(`.event__rollup-btn`);
-    if (editEventButton) {
-      editEventButton.addEventListener(`click`, handler);
+    const element = this.getElement().querySelector(`.event__rollup-btn`);
+    if (element) {
+      element.addEventListener(`click`, handler);
       this._clickHandler = handler;
     }
   }
@@ -315,7 +316,6 @@ export default class EventEdit extends AbstractSmartComponent {
     }
 
     const element = this.getElement();
-
     const options = {
       allowInput: true,
       dateFormat: `d/m/y H:i`,

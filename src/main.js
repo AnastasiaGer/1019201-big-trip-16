@@ -1,10 +1,7 @@
 import TripController from "./controllers/trip-controller.js";
-// import TripCost from "./components/trip-cost.js";
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
 import PointsModel from "./models/points.js";
 import TripInfoController from './controllers/trip-info.js';
-// import TripRoute from "./components/trip-route.js";
-// import {cardsList, datesList} from "./mock/event.js";
 import {render, RenderPosition} from "./utils/render.js";
 import FilterController from "./controllers/filter-controller.js";
 import {generateTabs} from "./mock/filters-tabs.js";
@@ -19,7 +16,6 @@ const tripInfoBlock = document.querySelector(`.trip-main`);
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 const tripEvents = document.querySelector(`.trip-events`);
 const siteMainElement = document.querySelector(`.page-main .page-body__container`);
-// const tripInfoRoute = tripInfoBlock.querySelector(`.trip-main__trip-info`);
 
 const init = () => {
 
@@ -41,10 +37,6 @@ const init = () => {
     tripController.createPoint();
   });
 
-  // render(tripInfoBlock, new TripInfo(), RenderPosition.AFTERBEGIN);
-  // render(tripInfoRoute, new TripRoute(datesList), RenderPosition.BEFOREEND); // ?
-  // render(tripInfoRoute, new TripCost(cardsList), RenderPosition.BEFOREEND); // ?
-
   const statisticsComponent = new Statistics(pointsModel);
   render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
   statisticsComponent.hide();
@@ -54,7 +46,7 @@ const init = () => {
     api.getDestinations(),
     api.getOffers()
   ]).then((res) => {
-    pointsModel.setEvents(res[0]);
+    pointsModel. setPoints(res[0]);
     tripController.render();
   });
 
@@ -74,13 +66,6 @@ const init = () => {
         break;
     }
   });
-
-  api.getPoints()
-   .then((points) => {
-     pointsModel.setEvents(points);
-     tripController.render();
-   });
-
 };
 
 init();

@@ -3,23 +3,23 @@ import {getEventsByFilter} from "../utils/filter.js";
 import {FILTER_TYPE} from "../const.js";
 export default class PointsModel {
   constructor() {
-    this._events = [];
+    this._points = [];
     this._activeFilterType = FILTER_TYPE.EVERYTHING;
 
     this._dataChangeHandlers = [];
     this._filterChangeHandlers = [];
   }
 
-  getEvents() {
-    return getEventsByFilter(this._events, this._activeFilterType);
+  getPoints() {
+    return getEventsByFilter(this._points, this._activeFilterType);
   }
 
-  getEventsAll() {
-    return this._events;
+  getPointsAll() {
+    return this._points;
   }
 
-  setEvents(events) {
-    this._events = Array.from(events);
+  setPoints(points) {
+    this._points = Array.from(points);
     this._callHandlers(this._dataChangeHandlers);
   }
 
@@ -29,13 +29,13 @@ export default class PointsModel {
   }
 
   removeEvent(id) {
-    const index = this._events.findIndex((item) => item.id === id);
+    const index = this._points.findIndex((item) => item.id === id);
 
     if (index === -1) {
       return false;
     }
 
-    this._events = [].concat(this._events.slice(0, index), this._events.slice(index + 1));
+    this._points = [].concat(this._points.slice(0, index), this._points.slice(index + 1));
 
     this._callHandlers(this._dataChangeHandlers);
 
@@ -43,22 +43,22 @@ export default class PointsModel {
   }
 
 
-  updateEvent(id, event) {
-    const index = this._events.findIndex((item) => item.id === id);
+  updateEvent(id, point) {
+    const index = this._points.findIndex((it) => it.id === id);
 
     if (index === -1) {
       return false;
     }
 
-    this._events = [].concat(this._events.slice(0, index), event, this._events.slice(index + 1));
+    this._points = [].concat(this._points.slice(0, index), point, this._points.slice(index + 1));
 
     this._callHandlers(this._dataChangeHandlers);
 
     return true;
   }
 
-  addEvent(event) {
-    this._events = [].concat(event, this._events);
+  addEvent(point) {
+    this._points = [].concat(point, this._points);
     this._callHandlers(this._dataChangeHandlers);
   }
 

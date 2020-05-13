@@ -2,7 +2,6 @@ import EventItem from "../components/event-item.js";
 import EditEvent from "../components/edit-event.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 import moment from "moment";
-import {getRandomDate} from "../mock/event.js";
 import Point from "../models/point.js";
 import Store from '../models/store.js';
 
@@ -13,14 +12,14 @@ export const Mode = {
 };
 
 export const EmptyEvent = {
-  id: String(Math.floor(getRandomDate() + Math.random())),
-  type: `Bus to`,
+  id: String(Date.now() + Math.random()),
+  type: `bus`,
   city: ``,
   photos: [],
   description: ``,
-  services: [],
-  start: Math.min(getRandomDate(), getRandomDate()),
-  end: Math.max(getRandomDate(), getRandomDate()),
+  offers: [],
+  start: new Date(),
+  end: new Date(),
   price: 0,
   isFavorite: false
 };
@@ -69,13 +68,13 @@ export default class PointController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  render(event, mode) {
+  render(point, mode) {
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
     this._mode = mode;
 
-    this._eventComponent = new EventItem(event);
-    this._eventEditComponent = new EditEvent(event);
+    this._eventComponent = new EventItem(point);
+    this._eventEditComponent = new EditEvent(point);
 
     const eventsList = this._container.querySelector(`.trip-events__list`);
 
@@ -93,7 +92,7 @@ export default class PointController {
         saveButtonText: `Saving...`,
       });
 
-      this._onDataChange(this, event, data);
+      this._onDataChange(this, point, data);
       this._eventEditComponent.activeForm();
       this. _replaceEditToEvent();
     });
@@ -103,14 +102,14 @@ export default class PointController {
         deleteButtonText: `Deleting...`,
       });
 
-      this._onDataChange(this, event, null);
+      this._onDataChange(this, point, null);
     });
 
     this._eventEditComponent.setFavoritesButtonClickHandler(() => {
-      const newPoint = Point.clone(event);
+      const newPoint = Point.clone(point);
       newPoint.isFavorite = !newPoint.isFavorite;
 
-      this._onDataChange(this, event, newPoint);
+      this._onDataChange(this, point, newPoint);
 
       this._mode = Mode.EDIT;
     });

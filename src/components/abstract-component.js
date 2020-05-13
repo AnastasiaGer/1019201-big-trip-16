@@ -12,13 +12,9 @@ export default class AbstractComponent {
       throw new Error(`Can't instantiate AbstractComponent, only concrete one.`);
     }
 
-    // Посмотрев на все компоненты выделяем одинаковые для всех методы. Ими оказываются `getElement`, `removeElement`. Так же проинициализируем в конструкторе свойство `_element`.
     this._element = null;
   }
 
-  // В компонентах есть метод с общим именем, но различной реализацией - `getTemplate`.
-  // Добавим его в абстрактный класс, но его реализация в нем будет бросать исключение.
-  // Это значит, что его потребуется переопределить в классах-наследниках.
   getTemplate() {
     throw new Error(`Abstract method not implemented: getTemplate`);
   }

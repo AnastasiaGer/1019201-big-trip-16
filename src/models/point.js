@@ -29,7 +29,6 @@ export default class Point {
     };
   }
 
-
   static parsePoint(data) {
     return new Point(data);
   }

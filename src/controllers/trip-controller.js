@@ -63,8 +63,12 @@ export default class TripController {
     this._daysContainer.show();
   }
 
+  getPoints() {
+    return this._pointsModel.getPoints();
+  }
+
   render() {
-    const points = this._pointsModel.getEvents();
+    const points = this._pointsModel.getPoints();
 
     const container = this._container;
 
@@ -98,7 +102,7 @@ export default class TripController {
 
   _updatePoints() {
     this._removePoints();
-    this._pointsControllers = renderPoints(this._pointsModel.getEvents(), this._daysContainer, this._onDataChange, this._onViewChange);
+    this._pointsControllers = renderPoints(this._pointsModel.getPoints(), this._daysContainer, this._onDataChange, this._onViewChange);
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
@@ -120,7 +124,7 @@ export default class TripController {
       this._pointsModel.removeEvent(oldData.id);
       this._updatePoints();
     } else {
-      this._api.updateEvent(oldData.id, newData)
+      this._api.updatePoint(oldData.id, newData)
          .then((pointsModel) => {
            const isSuccess = this._pointsModel.updateEvent(oldData.id, newData);
 
@@ -135,7 +139,7 @@ export default class TripController {
   _onSortTypeChange(sortType) {
     let sortedPoints = [];
     let isDefaultSorting = false;
-    const points = this._pointsModel.getEvents();
+    const points = this._pointsModel.getPoints();
 
     switch (sortType) {
       case SORT_TYPE.EVENT:
