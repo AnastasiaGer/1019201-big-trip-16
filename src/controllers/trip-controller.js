@@ -108,12 +108,12 @@ export default class TripController {
   }
 
   _onDataChange(pointController, oldData, newData) {
+
     if (oldData === EmptyEvent) {
       this._creatingPoint = null;
       if (newData === null) {
         pointController.destroy();
         this._updatePoints();
-        this._onSortTypeChange(this._sortComponent.getSortType());
       } else {
         this._api.createPoint(newData)
           .then((pointModel) => {
@@ -130,7 +130,6 @@ export default class TripController {
         .then(() => {
           this._pointsModel.removePoint(oldData.id);
           this._updatePoints();
-          this._onSortTypeChange(this._sortComponent.getSortType());
         })
         .catch(() => {
           pointController.shake();
@@ -142,7 +141,6 @@ export default class TripController {
 
           if (isSuccess) {
             this._updatePoints();
-            this._onSortTypeChange(this._sortComponent.getSortType());
           }
         })
         .catch(() => {

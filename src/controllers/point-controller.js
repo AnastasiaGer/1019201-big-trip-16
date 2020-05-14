@@ -96,7 +96,7 @@ export default class PointController {
 
       this._onDataChange(this, point, data);
       this._eventEditComponent.activeForm();
-      this. _replaceEditToEvent();
+      this._replaceEditToTask();
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
@@ -149,12 +149,17 @@ export default class PointController {
   }
 
   shake() {
-    this._taskEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    this._taskComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
 
     setTimeout(() => {
-      this._taskEditComponent.getElement().style.animation = ``;
-      this._taskComponent.getElement().style.animation = ``;
+      this._eventEditComponent.getElement().style.animation = ``;
+      this._eventComponent.getElement().style.animation = ``;
+
+      this._eventEditComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 

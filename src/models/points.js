@@ -28,7 +28,7 @@ export default class PointsModel {
     this._callHandlers(this._filterChangeHandlers);
   }
 
-  removeEvent(id) {
+  removePoint(id) {
     const index = this._points.findIndex((item) => item.id === id);
 
     if (index === -1) {
