@@ -5,6 +5,8 @@ import moment from "moment";
 import Point from "../models/point.js";
 import Store from '../models/store.js';
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 export const Mode = {
   DEFAULT: `default`,
   EDIT: `edit`,
@@ -144,6 +146,16 @@ export default class PointController {
     this._onViewChange();
     replace(this._eventEditComponent, this._eventComponent);
     this._mode = Mode.EDIT;
+  }
+
+  shake() {
+    this._taskEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._taskComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._taskEditComponent.getElement().style.animation = ``;
+      this._taskComponent.getElement().style.animation = ``;
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   _replaceEditToEvent() {
