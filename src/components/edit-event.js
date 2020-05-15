@@ -205,6 +205,12 @@ export default class EventEdit extends AbstractSmartComponent {
     this.rerender();
   }
 
+  rerender() {
+    super.rerender();
+
+    this._applyFlatpickr();
+  }
+
   removeElement() {
     if (this._flatpickrStartDate || this._flatpickrEndDate) {
       this._flatpickrStartDate.destroy();
@@ -215,12 +221,6 @@ export default class EventEdit extends AbstractSmartComponent {
     }
 
     super.removeElement();
-  }
-
-  rerender() {
-    super.rerender();
-
-    this._applyFlatpickr();
   }
 
   recoveryListeners() {
@@ -236,9 +236,6 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._type = point.type;
     this._city = point.city;
-    this._description = point.description;
-    this._photos = point.photos;
-    this._offers = point.offers;
 
     this.rerender();
   }

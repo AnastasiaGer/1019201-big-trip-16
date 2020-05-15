@@ -116,10 +116,13 @@ export default class TripController {
         this._updatePoints();
       } else {
         this._api.createPoint(newData)
-        .then((pointModel) => {
-          this._pointsModel.addPoint(pointModel);
-          this._pointsControllers = [].concat(pointController, this._pointsControllers);
-          this._updatePoints();
+          .then((pointModel) => {
+            this._pointsModel.addPoint(pointModel);
+            this._pointsControllers = [].concat(pointController, this._pointsControllers);
+            this._updatePoints();
+          })
+        .catch(() => {
+          pointController.shake();
         });
       }
     } else if (newData === null) {
@@ -127,17 +130,22 @@ export default class TripController {
         .then(() => {
           this._pointsModel.removePoint(oldData.id);
           this._updatePoints();
+        })
+        .catch(() => {
+          pointController.shake();
         });
     } else {
       this._api.updatePoint(oldData.id, newData)
-         .then((pointsModel) => {
-           const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
+        .then((pointModel) => {
+          const isSuccess = this._pointsModel.updatePoint(oldData.id, pointModel);
 
-           if (isSuccess) {
-             pointController.render(pointsModel, PointControllerMode.DEFAULT);
-             this._updatePoints(this._pointsControllers);
-           }
-         });
+          if (isSuccess) {
+            this._updatePoints();
+          }
+        })
+        .catch(() => {
+          pointController.shake();
+        });
     }
   }
 

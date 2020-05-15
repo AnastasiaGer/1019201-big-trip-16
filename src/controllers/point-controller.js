@@ -5,6 +5,8 @@ import moment from "moment";
 import Point from "../models/point.js";
 import Store from '../models/store.js';
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 export const Mode = {
   DEFAULT: `default`,
   EDIT: `edit`,
@@ -94,7 +96,7 @@ export default class PointController {
 
       this._onDataChange(this, point, data);
       this._eventEditComponent.activeForm();
-      this. _replaceEditToEvent();
+      this._replaceEditToTask();
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
@@ -144,6 +146,21 @@ export default class PointController {
     this._onViewChange();
     replace(this._eventEditComponent, this._eventComponent);
     this._mode = Mode.EDIT;
+  }
+
+  shake() {
+    this._eventEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._eventEditComponent.getElement().style.animation = ``;
+      this._eventComponent.getElement().style.animation = ``;
+
+      this._eventEditComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   _replaceEditToEvent() {
