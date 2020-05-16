@@ -1,5 +1,5 @@
-import Point from "./models/point.js";
-import Store from './models/store.js';
+import Point from "../models/point.js";
+import Store from '../models/store.js';
 
 const Method = {
   GET: `GET`,

@@ -6,9 +6,9 @@ import {render, RenderPosition} from "./utils/render.js";
 import FilterController from "./controllers/filter-controller.js";
 import {generateTabs} from "./mock/filters-tabs.js";
 import Statistics from "./components/statistics.js";
-import API from "./api.js";
+import API from "./api/index.js";
 
-const AUTHORIZATION = `Basic nkfdkjndfnjkdfbiuh=`;
+const AUTHORIZATION = `Basic ghdbdfdfvfghmj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 
 
