@@ -7,6 +7,7 @@ import FilterController from "./controllers/filter-controller.js";
 import {generateTabs} from "./mock/filters-tabs.js";
 import Statistics from "./components/statistics.js";
 import API from "./api/index.js";
+import Provider from "./api/provider.js";
 
 const AUTHORIZATION = `Basic ghdbdfdfvfghmj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
@@ -22,9 +23,10 @@ const init = () => {
   const tabs = generateTabs();
   const tripTabsComponent = new TripTabs(tabs);
   const api = new API(END_POINT, AUTHORIZATION);
+  const apiWithProvider = new Provider(api);
   const pointsModel = new PointsModel();
   const filterController = new FilterController(tripControls, pointsModel);
-  const tripController = new TripController(tripEvents, pointsModel, api);
+  const tripController = new TripController(tripEvents, pointsModel, apiWithProvider);
 
 
   render(tripControls, tripTabsComponent, RenderPosition.AFTERBEGIN);
@@ -42,9 +44,9 @@ const init = () => {
   statisticsComponent.hide();
 
   Promise.all([
-    api.getPoints(),
-    api.getDestinations(),
-    api.getOffers()
+    apiWithProvider.getPoints(),
+    apiWithProvider.getDestinations(),
+    apiWithProvider.getOffers()
   ]).then((res) => {
     pointsModel. setPoints(res[0]);
     tripController.render();
