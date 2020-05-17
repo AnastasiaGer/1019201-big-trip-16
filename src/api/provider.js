@@ -62,7 +62,6 @@ export default class Provider {
          });
     }
 
-    // TODO: Реализовать логику при отсутствии интернета
     const localPoint = Point.clone(Object.assign(point, {id}));
 
     this._store.setItem(id, localPoint.toRAW());
@@ -72,10 +71,12 @@ export default class Provider {
 
   deletePoint(id) {
     if (isOnline()) {
-      return this._api.deletePoint(id);
+      return this._api.deletePoint(id)
+      .then(() => this._store.removeItem(id));
     }
 
-    // TODO: Реализовать логику при отсутствии интернета
-    return Promise.reject(`offline logic is not implemented`);
+    this._store.removeItem(id);
+
+    return Promise.resolve();
   }
 }
