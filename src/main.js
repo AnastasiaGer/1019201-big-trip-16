@@ -1,15 +1,20 @@
-import TripController from "./controllers/trip-controller.js";
-import TripTabs, {TablItem} from "./components/trip-tabs.js";
-import PointsModel from "./models/points.js";
-import TripInfoController from './controllers/trip-info.js';
-import {render, RenderPosition} from "./utils/render.js";
-import FilterController from "./controllers/filter-controller.js";
 import {generateTabs} from "./mock/filters-tabs.js";
+import {render, RenderPosition} from "./utils/render.js";
+import API from "./api/index.js";
+import FilterController from "./controllers/filter-controller.js";
+import PointsModel from "./models/points.js";
+import Provider from "./api/provider.js";
 import Statistics from "./components/statistics.js";
-import API from "./api.js";
+import Store from "./api/store.js";
+import TripController from "./controllers/trip-controller.js";
+import TripInfoController from './controllers/trip-info.js';
+import TripTabs, {TablItem} from "./components/trip-tabs.js";
 
-const AUTHORIZATION = `Basic nkfdkjndfnjkdfbiuh=`;
+const AUTHORIZATION = `Basic ghdbdfdfvfghmj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+const STORE_PREFIX = `big-trip-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 
 const tripInfoBlock = document.querySelector(`.trip-main`);
@@ -22,9 +27,11 @@ const init = () => {
   const tabs = generateTabs();
   const tripTabsComponent = new TripTabs(tabs);
   const api = new API(END_POINT, AUTHORIZATION);
+  const store = new Store(STORE_NAME, window.localStorage);
+  const apiWithProvider = new Provider(api, store);
   const pointsModel = new PointsModel();
   const filterController = new FilterController(tripControls, pointsModel);
-  const tripController = new TripController(tripEvents, pointsModel, api);
+  const tripController = new TripController(tripEvents, pointsModel, apiWithProvider);
 
 
   render(tripControls, tripTabsComponent, RenderPosition.AFTERBEGIN);
@@ -42,12 +49,31 @@ const init = () => {
   statisticsComponent.hide();
 
   Promise.all([
-    api.getPoints(),
-    api.getDestinations(),
-    api.getOffers()
+    apiWithProvider.getPoints(),
+    apiWithProvider.getDestinations(),
+    apiWithProvider.getOffers()
   ]).then((res) => {
     pointsModel. setPoints(res[0]);
     tripController.render();
+  });
+
+  window.addEventListener(`load`, () => {
+    navigator.serviceWorker.register(`/sw.js`)
+      .then(() => {
+        // Действие, в случае успешной регистрации ServiceWorker
+      }).catch(() => {
+        // Действие, в случае ошибки при регистрации ServiceWorker
+      });
+  });
+
+  window.addEventListener(`online`, () => {
+    document.title = document.title.replace(` [offline]`, ``);
+
+    apiWithProvider.sync();
+  });
+
+  window.addEventListener(`offline`, () => {
+    document.title += ` [offline]`;
   });
 
   tripTabsComponent.setOnChange((item) => {

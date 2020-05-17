@@ -1,9 +1,7 @@
-import Filter from "../components/trip-filter.js";
-import {render, replace, RenderPosition} from "../utils/render.js";
 import {FILTER_TYPE} from "../const.js";
 import {getEventsByFilter} from "../utils/filter.js";
-
-
+import {render, replace, RenderPosition} from "../utils/render.js";
+import Filter from "../components/trip-filter.js";
 export default class FilterController {
   constructor(container, pointsModel) {
     this._container = container;

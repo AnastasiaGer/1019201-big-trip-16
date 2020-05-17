@@ -1,5 +1,5 @@
-import TripInfo from '../components/trip-info.js';
 import {RenderPosition, render, replace} from '../utils/render.js';
+import TripInfo from '../components/trip-info.js';
 
 export default class TripInfoController {
   constructor(container, pointsModel) {

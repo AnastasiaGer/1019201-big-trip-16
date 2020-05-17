@@ -1,4 +1,5 @@
 const FILTER_NAMES = [`Everything`, `Future`, `Past`];
+
 export const TABS_NAMES = [`Table`, `Stats`];
 
 const generateArrs = (arr) => {

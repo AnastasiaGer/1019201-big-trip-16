@@ -1,7 +1,7 @@
 // Создаст пустые моки для events. Передаст event на вход функции генерации разметки точек
-
 import {getRandomArrayItem, getRandomIntegerNumber} from "../utils/common.js";
 import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY} from '../const.js';
+
 export const EVENTS_AMOUNT = 20;
 const NUMBER_WEEK_DAYS = 7;
 const NUMBER_HOURS = 24;

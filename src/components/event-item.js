@@ -1,7 +1,7 @@
+import {getUpperCaseFirstLetter} from '../utils/common.js';
+import {TRAVEL_TRANSPORT, Placeholder} from '../const.js';
 import AbstractComponent from "./abstract-component.js";
 import moment from "moment";
-import {TRAVEL_TRANSPORT, Placeholder} from '../const.js';
-import {getUpperCaseFirstLetter} from '../utils/common.js';
 
 const getOffers = (offers) => {
   return offers.map((offer) => {
