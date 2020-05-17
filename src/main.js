@@ -57,6 +57,16 @@ const init = () => {
     tripController.render();
   });
 
+  window.addEventListener(`online`, () => {
+    document.title = document.title.replace(` [offline]`, ``);
+
+    apiWithProvider.sync();
+  });
+
+  window.addEventListener(`offline`, () => {
+    document.title += ` [offline]`;
+  });
+
   tripTabsComponent.setOnChange((item) => {
     switch (item) {
       case TablItem.TABLE:
