@@ -1,10 +1,13 @@
+import Point from "../models/point.js";
+
 const isOnline = () => {
   return window.navigator.onLine;
 };
 
 export default class Provider {
-  constructor(api) {
+  constructor(api, store) {
     this._api = api;
+    this._store = store;
   }
 
   getDestinations() {
@@ -27,11 +30,17 @@ export default class Provider {
 
   getPoints() {
     if (isOnline()) {
-      return this._api.getPoints();
+      return this._api.getPoints()
+         .then((points) => {
+           points.forEach((point) => this._store.setItem(point.id, point.toRAW()));
+
+           return points;
+         });
     }
 
-    // TODO: Реализовать логику при отсутствии интернета
-    return Promise.reject(`offline logic is not implemented`);
+    const storePoints = Object.values(this._store.getItems());
+
+    return Promise.resolve(Point.parseTasks(storePoints));
   }
 
   createPoint(point) {

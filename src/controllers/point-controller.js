@@ -3,7 +3,7 @@ import EditEvent from "../components/edit-event.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 import moment from "moment";
 import Point from "../models/point.js";
-import Store from '../models/store.js';
+import Stock from '../models/stock.js';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
@@ -32,7 +32,7 @@ const parseFormData = (formData) => {
     ...document.querySelectorAll(`.event__offer-checkbox:checked + label[for^="event"]`)
   ];
 
-  const destination = Store.getDestinations().find((city) => city.name === formData.get(`event-destination`));
+  const destination = Stock.getDestinations().find((city) => city.name === formData.get(`event-destination`));
 
   return new Point({
     'base_price': Number(formData.get(`event-price`)),

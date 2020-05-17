@@ -7,6 +7,7 @@ import FilterController from "./controllers/filter-controller.js";
 import {generateTabs} from "./mock/filters-tabs.js";
 import Statistics from "./components/statistics.js";
 import API from "./api/index.js";
+import Store from "./api/store.js";
 import Provider from "./api/provider.js";
 
 const AUTHORIZATION = `Basic ghdbdfdfvfghmj=`;
@@ -23,7 +24,8 @@ const init = () => {
   const tabs = generateTabs();
   const tripTabsComponent = new TripTabs(tabs);
   const api = new API(END_POINT, AUTHORIZATION);
-  const apiWithProvider = new Provider(api);
+  const store = new Store();
+  const apiWithProvider = new Provider(api, store);
   const pointsModel = new PointsModel();
   const filterController = new FilterController(tripControls, pointsModel);
   const tripController = new TripController(tripEvents, pointsModel, apiWithProvider);

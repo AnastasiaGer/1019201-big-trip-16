@@ -5,7 +5,7 @@ import {TRAVEL_TRANSPORT, TRAVEL_ACTIVITY, Placeholder} from '../const.js';
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import flatpickr from "flatpickr";
 import moment from "moment";
-import Store from '../models/store.js';
+import Stock from '../models/stock.js';
 
 const DefaultData = {
   deleteButtonText: `Delete`,
@@ -60,7 +60,7 @@ const createEditEventTemplate = (point, options) => {
     creatingPoint = true;
   }
 
-  const cities = Store.getDestinations().map((destination) => destination.name);
+  const cities = Stock.getDestinations().map((destination) => destination.name);
 
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
@@ -286,15 +286,15 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._type = evt.target.value;
-      this._offers = Store.getOffers().find((offer) => offer.type === this._type).offers;
+      this._offers = Stock.getOffers().find((offer) => offer.type === this._type).offers;
 
       this.rerender();
     });
 
     element.querySelector(`.event__input--destination`).addEventListener(`change`, (evt) => {
       this._city = evt.target.value;
-      this._photos = Store.getDestinations().find((destination) => destination.name === this._city).pictures;
-      this._description = Store.getDestinations().find((destination) => destination.name === this._city).description;
+      this._photos = Stock.getDestinations().find((destination) => destination.name === this._city).pictures;
+      this._description = Stock.getDestinations().find((destination) => destination.name === this._city).description;
 
       this.rerender();
     });
