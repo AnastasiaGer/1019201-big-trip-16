@@ -12,6 +12,9 @@ import Provider from "./api/provider.js";
 
 const AUTHORIZATION = `Basic ghdbdfdfvfghmj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+const STORE_PREFIX = `big-trip-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 
 const tripInfoBlock = document.querySelector(`.trip-main`);
@@ -24,7 +27,7 @@ const init = () => {
   const tabs = generateTabs();
   const tripTabsComponent = new TripTabs(tabs);
   const api = new API(END_POINT, AUTHORIZATION);
-  const store = new Store();
+  const store = new Store(STORE_NAME, window.localStorage);
   const apiWithProvider = new Provider(api, store);
   const pointsModel = new PointsModel();
   const filterController = new FilterController(tripControls, pointsModel);
