@@ -1,4 +1,5 @@
 import moment from 'moment';
+
 const MINUTES_PER_HOUR = 60;
 
 export const getRandomArrayItem = (array) => {

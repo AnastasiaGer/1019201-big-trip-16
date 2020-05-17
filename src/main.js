@@ -1,14 +1,14 @@
-import TripController from "./controllers/trip-controller.js";
-import TripTabs, {TablItem} from "./components/trip-tabs.js";
-import PointsModel from "./models/points.js";
-import TripInfoController from './controllers/trip-info.js';
-import {render, RenderPosition} from "./utils/render.js";
-import FilterController from "./controllers/filter-controller.js";
 import {generateTabs} from "./mock/filters-tabs.js";
-import Statistics from "./components/statistics.js";
+import {render, RenderPosition} from "./utils/render.js";
 import API from "./api/index.js";
-import Store from "./api/store.js";
+import FilterController from "./controllers/filter-controller.js";
+import PointsModel from "./models/points.js";
 import Provider from "./api/provider.js";
+import Statistics from "./components/statistics.js";
+import Store from "./api/store.js";
+import TripController from "./controllers/trip-controller.js";
+import TripInfoController from './controllers/trip-info.js';
+import TripTabs, {TablItem} from "./components/trip-tabs.js";
 
 const AUTHORIZATION = `Basic ghdbdfdfvfghmj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;

@@ -1,6 +1,5 @@
-
-import {getEventsByFilter} from "../utils/filter.js";
 import {FILTER_TYPE} from "../const.js";
+import {getEventsByFilter} from "../utils/filter.js";
 export default class PointsModel {
   constructor() {
     this._points = [];

@@ -1,4 +1,3 @@
-
 import {render, RenderPosition} from "../utils/render.js";
 import {SORT_TYPE} from "../const.js";
 import DayNumber from "../components/day-number.js";

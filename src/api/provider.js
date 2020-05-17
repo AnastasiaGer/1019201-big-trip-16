@@ -1,5 +1,5 @@
-import Point from "../models/point.js";
 import {nanoid} from "nanoid";
+import Point from "../models/point.js";
 
 const isOnline = () => {
   return window.navigator.onLine;
