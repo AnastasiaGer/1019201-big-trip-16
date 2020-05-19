@@ -9,6 +9,10 @@ import Store from "./api/store.js";
 import TripController from "./controllers/trip-controller.js";
 import TripInfoController from './controllers/trip-info.js';
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
+import {getEventsByFilter} from "./utils/filter";
+import {FILTER_TYPE} from "./const";
+
+const disabledStyle = `pointer-events: none; cursor: default;`;
 
 const AUTHORIZATION = `Basic ghdbdfdfvfghmj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
@@ -31,7 +35,7 @@ const init = () => {
   const apiWithProvider = new Provider(api, store);
   const pointsModel = new PointsModel();
   const filterController = new FilterController(tripControls, pointsModel);
-  const tripController = new TripController(tripEvents, pointsModel, apiWithProvider);
+  const tripController = new TripController(tripEvents, filterController, pointsModel, apiWithProvider);
 
 
   render(tripControls, tripTabsComponent, RenderPosition.AFTERBEGIN);
@@ -54,6 +58,13 @@ const init = () => {
     apiWithProvider.getOffers()
   ]).then((res) => {
     pointsModel. setPoints(res[0]);
+    Object.values(FILTER_TYPE).map((filter, isDisabled) => {
+      const filteredPoints = getEventsByFilter(pointsModel.getPointsAll(), filter.toLowerCase());
+      if (filteredPoints.length === 0) {
+        return filterController.disableEmptyFilter(filter.toLowerCase(), isDisabled, disabledStyle);
+      }
+      return filterController.render();
+    });
     tripController.render();
   });
 

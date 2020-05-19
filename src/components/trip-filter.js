@@ -12,7 +12,7 @@ const createFilterMarkup = (filter, isChecked) => {
   return (
     `<div class="trip-filters__filter">
       <input id="filter-${name}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${name}" ${isChecked ? `checked` : ``}>
-      <label class="trip-filters__filter-label" for="filter-${name}">${name}</label>
+      <label id="${name}" class="trip-filters__filter-label" for="filter-${name}">${name}</label>
     </div>`
   );
 };
@@ -35,6 +35,15 @@ export default class Filter extends AbstractComponent {
 
   getTemplate() {
     return createFilterTemplate(this._names);
+  }
+
+  disableEmptyFilter(name, isDisabled, style) {
+    const item = this.getElement().querySelector(`#filter-${name}`);
+
+    if (item) {
+      item.disabled = isDisabled;
+      this.getElement().querySelector(`#${name}`).style = style;
+    }
   }
 
   setFilterChangeHandler(handler) {

@@ -37,8 +37,9 @@ const renderPoints = (events, container, onDataChange, onViewChange, isDefaultSo
 };
 
 export default class TripController {
-  constructor(container, pointsModel, api) {
+  constructor(container, filterController, pointsModel, api) {
     this._container = container;
+    this._filterController = filterController;
     this._pointsModel = pointsModel;
     this._api = api;
 
@@ -58,10 +59,12 @@ export default class TripController {
 
   hide() {
     this._daysContainer.hide();
+    this._updatePoints();
   }
 
   show() {
     this._daysContainer.show();
+    this._updatePoints();
   }
 
   getPoints() {
@@ -103,6 +106,9 @@ export default class TripController {
   _updatePoints() {
     this._removePoints();
     this._pointsControllers = renderPoints(this._pointsModel.getPoints(), this._daysContainer, this._onDataChange, this._onViewChange);
+    if (this._pointsModel.getPoints().length === 0) {
+      this._filterController.disableEmptyFilter(this._pointsModel.getPoints());
+    }
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
@@ -139,7 +145,7 @@ export default class TripController {
           const isSuccess = this._pointsModel.updatePoint(oldData.id, pointModel);
 
           if (isSuccess) {
-            this._updatePoints();
+            pointController.render(pointModel, PointControllerMode.DEFAULT);
           }
         })
         .catch(() => {

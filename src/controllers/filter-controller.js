@@ -1,5 +1,4 @@
 import {FILTER_TYPE} from "../const.js";
-import {getEventsByFilter} from "../utils/filter.js";
 import {render, replace, RenderPosition} from "../utils/render.js";
 import Filter from "../components/trip-filter.js";
 export default class FilterController {
@@ -18,12 +17,10 @@ export default class FilterController {
 
   render() {
     const container = this._container;
-    const allEvents = this._pointsModel.getPointsAll();
 
     const filters = Object.values(FILTER_TYPE).map((filterType) => {
       return {
         name: filterType,
-        count: getEventsByFilter(allEvents, filterType).length,
         checked: filterType === this._activeFilterType,
       };
     });
@@ -38,6 +35,10 @@ export default class FilterController {
     } else {
       render(container, this._tripFiltersComponent, RenderPosition.AFTERBEGIN);
     }
+  }
+
+  disableEmptyFilter(name, isDisabled, style) {
+    this._tripFiltersComponent.disableEmptyFilter(name, isDisabled, style);
   }
 
   _onFilterChange(filterType) {
