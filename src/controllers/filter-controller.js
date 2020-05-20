@@ -37,8 +37,8 @@ export default class FilterController {
     }
   }
 
-  disableEmptyFilter(name, isDisabled, style) {
-    this._tripFiltersComponent.disableEmptyFilter(name, isDisabled, style);
+  disableEmptyFilter(currentFilter) {
+    this._tripFiltersComponent.disableEmptyFilter(currentFilter);
   }
 
   _onFilterChange(filterType) {

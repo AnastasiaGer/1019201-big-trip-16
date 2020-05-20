@@ -1,4 +1,4 @@
-import {render, RenderPosition} from "../utils/render.js";
+import {render, RenderPosition, remove} from "../utils/render.js";
 import {SORT_TYPE} from "../const.js";
 import DayNumber from "../components/day-number.js";
 import DaysList from "../components/trip-list.js";
@@ -105,11 +105,15 @@ export default class TripController {
 
   _updatePoints() {
     this._removePoints();
-    this._pointsControllers = renderPoints(this._pointsModel.getPoints(), this._daysContainer, this._onDataChange, this._onViewChange);
-    if (this._pointsModel.getPoints().length === 0) {
-      this._filterController.disableEmptyFilter(this._pointsModel.getPoints());
+    if (this._pointsModel.getPointsAll().length <= 0) {
+      render(this._container, this._noTasksComponent);
+    } else {
+      remove(this._noTasksComponent);
+      this.render(this._daysContainer.getElement(), this._pointsModel.getPoints());
+      if (this._pointsModel.getPoints().length === 0) {
+        this._filterController.disableEmptyFilter(this._pointsModel.getActiveFilterType());
+      }
     }
-    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
   _onDataChange(pointController, oldData, newData) {

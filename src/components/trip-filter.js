@@ -37,13 +37,8 @@ export default class Filter extends AbstractComponent {
     return createFilterTemplate(this._names);
   }
 
-  disableEmptyFilter(name, isDisabled, style) {
-    const item = this.getElement().querySelector(`#filter-${name}`);
-
-    if (item) {
-      item.disabled = isDisabled;
-      this.getElement().querySelector(`#${name}`).style = style;
-    }
+  disableEmptyFilter(currentFilter) {
+    this.getElement().querySelector(`#filter-${currentFilter}`).setAttribute(`disabled`, `true`);
   }
 
   setFilterChangeHandler(handler) {

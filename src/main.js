@@ -12,8 +12,6 @@ import TripController from "./controllers/trip-controller.js";
 import TripInfoController from './controllers/trip-info.js';
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
 
-const disabledStyle = `pointer-events: none; cursor: default;`;
-
 const AUTHORIZATION = `Basic ghdbdfdfvfghmj=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `big-trip-localstorage`;
@@ -58,10 +56,10 @@ const init = () => {
     apiWithProvider.getOffers()
   ]).then((res) => {
     pointsModel. setPoints(res[0]);
-    Object.values(FILTER_TYPE).map((filter, isDisabled) => {
+    Object.values(FILTER_TYPE).map((filter) => {
       const filteredPoints = getEventsByFilter(pointsModel.getPointsAll(), filter.toLowerCase());
       if (filteredPoints.length === 0) {
-        return filterController.disableEmptyFilter(filter.toLowerCase(), isDisabled, disabledStyle);
+        return filterController.disableEmptyFilter(filter.toLowerCase());
       }
       return filterController.render();
     });
