@@ -12,7 +12,7 @@ import TripController from "./controllers/trip-controller.js";
 import TripInfoController from './controllers/trip-info.js';
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
 
-const AUTHORIZATION = `Basic ghdbdfdfvfghmj=`;
+const AUTHORIZATION = `Basic kljdsfjknsfdjndvxlij=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `big-trip-localstorage`;
 const STORE_VER = `v1`;
