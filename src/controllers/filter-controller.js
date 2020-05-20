@@ -1,6 +1,8 @@
 import {FILTER_TYPE} from "../const.js";
 import {render, replace, RenderPosition} from "../utils/render.js";
 import Filter from "../components/trip-filter.js";
+const disabledStyle = `pointer-events: none; cursor: default;`;
+
 export default class FilterController {
   constructor(container, pointsModel) {
     this._container = container;
@@ -37,8 +39,8 @@ export default class FilterController {
     }
   }
 
-  disableEmptyFilter(currentFilter) {
-    this._tripFiltersComponent.disableEmptyFilter(currentFilter);
+  disableEmptyFilter(currentFilter, isDisabled) {
+    this._tripFiltersComponent.disableEmptyFilter(currentFilter, isDisabled, disabledStyle);
   }
 
   _onFilterChange(filterType) {
