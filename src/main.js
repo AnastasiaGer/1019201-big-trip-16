@@ -1,4 +1,6 @@
-import {generateTabs} from "./mock/filters-tabs.js";
+import {FILTER_TYPE} from "./const";
+import {generateTabs} from "./utils/common.js";
+import {getEventsByFilter} from "./utils/filter.js";
 import {render, RenderPosition} from "./utils/render.js";
 import API from "./api/index.js";
 import FilterController from "./controllers/filter-controller.js";
@@ -10,7 +12,7 @@ import TripController from "./controllers/trip-controller.js";
 import TripInfoController from './controllers/trip-info.js';
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
 
-const AUTHORIZATION = `Basic ghdbdfdfvfghmj=`;
+const AUTHORIZATION = `Basic kljdsfjknsfdjndvxlij=`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `big-trip-localstorage`;
 const STORE_VER = `v1`;
@@ -31,7 +33,7 @@ const init = () => {
   const apiWithProvider = new Provider(api, store);
   const pointsModel = new PointsModel();
   const filterController = new FilterController(tripControls, pointsModel);
-  const tripController = new TripController(tripEvents, pointsModel, apiWithProvider);
+  const tripController = new TripController(tripEvents, filterController, pointsModel, apiWithProvider);
 
 
   render(tripControls, tripTabsComponent, RenderPosition.AFTERBEGIN);
@@ -54,15 +56,20 @@ const init = () => {
     apiWithProvider.getOffers()
   ]).then((res) => {
     pointsModel. setPoints(res[0]);
+    Object.values(FILTER_TYPE).map((filter) => {
+      const filteredPoints = getEventsByFilter(pointsModel.getPointsAll(), filter.toLowerCase());
+      if (filteredPoints.length === 0) {
+        return filterController.disableEmptyFilter(filter.toLowerCase());
+      }
+      return filterController.render();
+    });
     tripController.render();
   });
 
   window.addEventListener(`load`, () => {
     navigator.serviceWorker.register(`/sw.js`)
       .then(() => {
-        // Действие, в случае успешной регистрации ServiceWorker
       }).catch(() => {
-        // Действие, в случае ошибки при регистрации ServiceWorker
       });
   });
 

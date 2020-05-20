@@ -158,7 +158,6 @@ const createEditEventTemplate = (point, options) => {
     </form>`
   );
 };
-
 export default class EventEdit extends AbstractSmartComponent {
   constructor(point) {
     super();
@@ -219,7 +218,6 @@ export default class EventEdit extends AbstractSmartComponent {
       this._flatpickrEndDate = null;
       this._clickHandler = null;
     }
-
     super.removeElement();
   }
 

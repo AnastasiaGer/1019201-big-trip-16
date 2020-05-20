@@ -1,17 +1,11 @@
-// Проверка в конструкторе очень важна. Она позволит использовать абстрактный
-// класс только в качестве родительского класса и выбросит ошибку при попытке
-// выполнить `const c = new AbstractComponent()`.
 import {createElement} from "../utils/render.js";
 
 const HIDDEN_CLASS = `visually-hidden`;
-
-
 export default class AbstractComponent {
   constructor() {
     if (new.target === AbstractComponent) {
       throw new Error(`Can't instantiate AbstractComponent, only concrete one.`);
     }
-
     this._element = null;
   }
 
@@ -23,7 +17,6 @@ export default class AbstractComponent {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
     }
-
     return this._element;
   }
 

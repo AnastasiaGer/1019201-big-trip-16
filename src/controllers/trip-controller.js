@@ -1,4 +1,4 @@
-import {render, RenderPosition} from "../utils/render.js";
+import {render, RenderPosition, remove} from "../utils/render.js";
 import {SORT_TYPE} from "../const.js";
 import DayNumber from "../components/day-number.js";
 import DaysList from "../components/trip-list.js";
@@ -37,8 +37,9 @@ const renderPoints = (events, container, onDataChange, onViewChange, isDefaultSo
 };
 
 export default class TripController {
-  constructor(container, pointsModel, api) {
+  constructor(container, filterController, pointsModel, api) {
     this._container = container;
+    this._filterController = filterController;
     this._pointsModel = pointsModel;
     this._api = api;
 
@@ -58,10 +59,12 @@ export default class TripController {
 
   hide() {
     this._daysContainer.hide();
+    this._updatePoints();
   }
 
   show() {
     this._daysContainer.show();
+    this._updatePoints();
   }
 
   getPoints() {
@@ -102,8 +105,15 @@ export default class TripController {
 
   _updatePoints() {
     this._removePoints();
-    this._pointsControllers = renderPoints(this._pointsModel.getPoints(), this._daysContainer, this._onDataChange, this._onViewChange);
-    this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
+    if (this._pointsModel.getPointsAll().length <= 0) {
+      render(this._container, this._noTasksComponent);
+    } else {
+      remove(this._noTasksComponent);
+      this.render(this._daysContainer.getElement(), this._pointsModel.getPoints());
+      if (this._pointsModel.getPoints().length === 0) {
+        this._filterController.disableEmptyFilter(this._pointsModel.getActiveFilterType());
+      }
+    }
   }
 
   _onDataChange(pointController, oldData, newData) {
@@ -139,7 +149,7 @@ export default class TripController {
           const isSuccess = this._pointsModel.updatePoint(oldData.id, pointModel);
 
           if (isSuccess) {
-            this._updatePoints();
+            pointController.render(pointModel, PointControllerMode.DEFAULT);
           }
         })
         .catch(() => {

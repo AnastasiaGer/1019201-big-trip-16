@@ -1,5 +1,6 @@
 import moment from 'moment';
 
+const TABS_NAMES = [`Table`, `Stats`];
 const MINUTES_PER_HOUR = 60;
 
 export const getRandomArrayItem = (array) => {
@@ -38,4 +39,16 @@ export const getUpperCaseFirstLetter = (type) => {
   return (
     type[0].toUpperCase() + type.slice(1, type.length)
   );
+};
+
+const generateArrs = (arr) => {
+  return arr.map((item) => {
+    return {
+      name: item
+    };
+  });
+};
+
+export const generateTabs = () => {
+  return generateArrs(TABS_NAMES);
 };
