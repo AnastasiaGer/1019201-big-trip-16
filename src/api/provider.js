@@ -28,7 +28,6 @@ export default class Provider {
       return this._api.getDestinations();
     }
 
-    // TODO: Реализовать логику при отсутствии интернета
     return Promise.reject(`offline logic is not implemented`);
   }
 
@@ -37,7 +36,6 @@ export default class Provider {
       return this._api.getOffers();
     }
 
-    // TODO: Реализовать логику при отсутствии интернета
     return Promise.reject(`offline logic is not implemented`);
   }
 
@@ -68,8 +66,6 @@ export default class Provider {
          });
     }
 
-    // На случай локального создания данных мы должны сами создать `id`.
-    // Иначе наша модель будет не полной и это может привнести баги.
     const localNewPointId = nanoid();
     const localNewPoint = Point.clone(Object.assign(point, {id: localNewPointId}));
 
@@ -112,12 +108,9 @@ export default class Provider {
 
       return this._api.sync(storePoints)
         .then((response) => {
-          // Забираем из ответа синхронизированные задачи
           const createdPoints = getSyncedPoints(response.created);
           const updatedPoints = getSyncedPoints(response.updated);
 
-          // Добавляем синхронизированные задачи в хранилище.
-          // Хранилище должно быть актуальным в любой момент.
           const items = createStoreStructure([...createdPoints, ...updatedPoints]);
 
           this._store.setItems(items);

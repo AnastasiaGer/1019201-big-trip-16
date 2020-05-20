@@ -1,4 +1,6 @@
-import {generateTabs} from "./mock/filters-tabs.js";
+import {FILTER_TYPE} from "./const";
+import {generateTabs} from "./utils/common.js";
+import {getEventsByFilter} from "./utils/filter.js";
 import {render, RenderPosition} from "./utils/render.js";
 import API from "./api/index.js";
 import FilterController from "./controllers/filter-controller.js";
@@ -9,8 +11,6 @@ import Store from "./api/store.js";
 import TripController from "./controllers/trip-controller.js";
 import TripInfoController from './controllers/trip-info.js';
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
-import {getEventsByFilter} from "./utils/filter";
-import {FILTER_TYPE} from "./const";
 
 const disabledStyle = `pointer-events: none; cursor: default;`;
 
@@ -71,9 +71,7 @@ const init = () => {
   window.addEventListener(`load`, () => {
     navigator.serviceWorker.register(`/sw.js`)
       .then(() => {
-        // Действие, в случае успешной регистрации ServiceWorker
       }).catch(() => {
-        // Действие, в случае ошибки при регистрации ServiceWorker
       });
   });
 
