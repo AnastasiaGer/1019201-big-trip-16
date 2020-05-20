@@ -24,9 +24,9 @@ const createEventTemplate = (event) => {
   const duration = moment.duration(moment(endDate).diff(moment(startDate)));
   const startDateTime = moment(startDate).format(`YYYY-MM-DDThh:mm`);
   const endDateTime = moment(endDate).format(`YYYY-MM-DDThh:mm`);
-  let days = duration.days();
-  let hours = duration.hours();
-  let minutes = duration.minutes();
+  const days = duration.days();
+  const hours = duration.hours();
+  const minutes = duration.minutes();
   const servicesList = getOffers(offers);
 
   return (
