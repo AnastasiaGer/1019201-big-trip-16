@@ -40,7 +40,7 @@ export default class FilterController {
   }
 
   disableEmptyFilter(currentFilter, isDisabled) {
-    this._tripFiltersComponent.disableEmptyFilter(currentFilter, isDisabled, disabledStyle);
+    this._tripFiltersComponent. switchFilterAvailability(currentFilter, isDisabled, disabledStyle);
   }
 
   _onFilterChange(filterType) {
