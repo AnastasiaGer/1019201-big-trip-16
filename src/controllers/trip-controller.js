@@ -48,6 +48,7 @@ export default class TripController {
     this._sortComponent = new Sorting();
     this._daysContainer = new DaysList();
     this._creatingPoint = null;
+    this._sortType = SORT_TYPE.EVENT;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
@@ -187,6 +188,8 @@ export default class TripController {
   }
 
   _onFilterChange() {
+    this._sortComponent.setActiveItem(SORT_TYPE.EVENT);
+    this._sortType = SORT_TYPE.EVENT;
     this._updatePoints();
   }
 }

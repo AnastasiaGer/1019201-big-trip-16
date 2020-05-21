@@ -12,7 +12,7 @@ import TripController from "./controllers/trip-controller.js";
 import TripInfoController from './controllers/trip-info.js';
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
 
-const AUTHORIZATION = `Basic kljdsfjknsfdjndvxlij=`;
+const AUTHORIZATION = `Basic jnfsjnjfdvmkhdf`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `big-trip-localstorage`;
 const STORE_VER = `v1`;
@@ -42,7 +42,9 @@ const init = () => {
   const tripInfoController = new TripInfoController(tripInfoBlock, pointsModel);
   tripInfoController.render();
 
-  document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, () => {
+  const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
+  newEventButton.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
     tripController.createPoint();
   });
 

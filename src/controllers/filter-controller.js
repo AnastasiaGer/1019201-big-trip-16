@@ -32,6 +32,12 @@ export default class FilterController {
     this._tripFiltersComponent = new Filter(filters);
     this._tripFiltersComponent.setFilterChangeHandler(this._onFilterChange);
 
+    Object.values(FILTER_TYPE).map((filterType) => {
+      if (!this._pointsModel.getPoints(filterType).length) {
+        this._tripFiltersComponent.switchFilterAvailability(filterType, true, disabledStyle);
+      }
+    });
+
     if (oldComponent) {
       replace(this._tripFiltersComponent, oldComponent);
     } else {

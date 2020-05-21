@@ -43,7 +43,12 @@ export default class Sorting extends AbstractSmartComponent {
     return createSortTemplate(this._currentSortType);
   }
 
-  getSortType() {
+  setActiveItem(menuItem) {
+    const item = this.getElement().querySelector(`#sort-${menuItem}`);
+    this._currenSortType = menuItem;
+    if (item) {
+      item.checked = true;
+    }
   }
 
   recoveryListeners() {
