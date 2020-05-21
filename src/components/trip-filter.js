@@ -37,6 +37,14 @@ export default class Filter extends AbstractComponent {
     return createFilterTemplate(this._names);
   }
 
+  setActiveItem(filter) {
+    const item = this.getElement().querySelector(`#filter-${filter}`);
+
+    if (item) {
+      item.checked = true;
+    }
+  }
+
   switchFilterAvailability(filter, isDisabled, style) {
     const item = this.getElement().querySelector(`#filter-${filter}`);
 

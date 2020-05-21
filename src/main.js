@@ -84,6 +84,7 @@ const init = () => {
   });
 
   tripTabsComponent.setOnChange((item) => {
+    filterController.setDefaultFilter();
     switch (item) {
       case TablItem.TABLE:
         tripTabsComponent.setActiveItem(TablItem.TABLE);

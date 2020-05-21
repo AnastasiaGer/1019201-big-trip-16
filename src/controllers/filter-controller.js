@@ -39,6 +39,11 @@ export default class FilterController {
     }
   }
 
+  setDefaultFilter() {
+    this._pointsModel.setFilter(FILTER_TYPE.EVERYTHING);
+    this._tripFiltersComponent.setActiveItem(FILTER_TYPE.EVERYTHING);
+  }
+
   disableEmptyFilter(currentFilter, isDisabled) {
     this._tripFiltersComponent. switchFilterAvailability(currentFilter, isDisabled, disabledStyle);
   }
@@ -46,6 +51,7 @@ export default class FilterController {
   _onFilterChange(filterType) {
     this._pointsModel.setFilter(filterType);
     this._activeFilterType = filterType;
+
   }
 
   _onDataChange() {

@@ -93,6 +93,7 @@ export default class TripController {
     }
 
     this._creatingPoint = new PointController(this._container, this._onDataChange, this._onViewChange);
+    this._filterController.setDefaultFilter();
     this._creatingPoint.render(EmptyEvent, PointControllerMode.CREATING);
     this._onViewChange();
   }
@@ -129,6 +130,7 @@ export default class TripController {
             this._pointsModel.addPoint(pointModel);
             this._pointsControllers = [].concat(pointController, this._pointsControllers);
             this._updatePoints();
+            this._filterController.setDefaultFilter();
           })
         .catch(() => {
           pointController.shake();
