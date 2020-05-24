@@ -11,6 +11,7 @@ import Store from "./api/store.js";
 import TripController from "./controllers/trip-controller.js";
 import TripInfoController from './controllers/trip-info.js';
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
+// test
 
 const AUTHORIZATION = `Basic jnfsjnjfdvmkhdf`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
