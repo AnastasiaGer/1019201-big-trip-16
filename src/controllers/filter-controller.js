@@ -32,11 +32,22 @@ export default class FilterController {
     this._tripFiltersComponent = new Filter(filters);
     this._tripFiltersComponent.setFilterChangeHandler(this._onFilterChange);
 
+    Object.values(FILTER_TYPE).map((filterType) => {
+      if (!this._pointsModel.getPoints(filterType).length) {
+        this._tripFiltersComponent.switchFilterAvailability(filterType, true, disabledStyle);
+      }
+    });
+
     if (oldComponent) {
       replace(this._tripFiltersComponent, oldComponent);
     } else {
       render(container, this._tripFiltersComponent, RenderPosition.AFTERBEGIN);
     }
+  }
+
+  setDefaultFilter() {
+    this._pointsModel.setFilter(FILTER_TYPE.EVERYTHING);
+    this._tripFiltersComponent.setActiveItem(FILTER_TYPE.EVERYTHING);
   }
 
   disableEmptyFilter(currentFilter, isDisabled) {
@@ -46,6 +57,7 @@ export default class FilterController {
   _onFilterChange(filterType) {
     this._pointsModel.setFilter(filterType);
     this._activeFilterType = filterType;
+
   }
 
   _onDataChange() {

@@ -48,6 +48,7 @@ export default class TripController {
     this._sortComponent = new Sorting();
     this._daysContainer = new DaysList();
     this._creatingPoint = null;
+    this._sortType = SORT_TYPE.EVENT;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
@@ -93,6 +94,7 @@ export default class TripController {
     }
 
     this._creatingPoint = new PointController(this._container, this._onDataChange, this._onViewChange);
+    this._filterController.setDefaultFilter();
     this._creatingPoint.render(EmptyEvent, PointControllerMode.CREATING);
     this._onViewChange();
   }
@@ -129,6 +131,7 @@ export default class TripController {
             this._pointsModel.addPoint(pointModel);
             this._pointsControllers = [].concat(pointController, this._pointsControllers);
             this._updatePoints();
+            this._filterController.setDefaultFilter();
           })
         .catch(() => {
           pointController.shake();
@@ -185,6 +188,8 @@ export default class TripController {
   }
 
   _onFilterChange() {
+    this._sortComponent.setActiveItem(SORT_TYPE.EVENT);
+    this._sortType = SORT_TYPE.EVENT;
     this._updatePoints();
   }
 }
