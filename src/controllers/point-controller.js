@@ -106,6 +106,7 @@ export default class PointController {
 
       this._onDataChange(this, point, data);
       this._eventEditComponent.activeForm();
+      this._replaceEditToEvent();
     });
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
@@ -147,7 +148,7 @@ export default class PointController {
 
   setDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
-      this. _replaceEditToEvent();
+      this._replaceEditToEvent();
     }
   }
 
@@ -185,7 +186,7 @@ export default class PointController {
       if (this._mode === Mode.CREATING) {
         this._onDataChange(this, EmptyEvent, null);
       }
-      this. _replaceEditToEvent();
+      this._replaceEditToEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   }
