@@ -46,7 +46,8 @@ const init = () => {
   const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
   newEventButton.addEventListener(`click`, (evt) => {
     evt.preventDefault();
-    tripController.createPoint();
+    filterController.setDefaultFilter();
+    tripController.createPoint(newEventButton);
   });
 
   const statisticsComponent = new Statistics(pointsModel);
