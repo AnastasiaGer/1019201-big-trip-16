@@ -22,13 +22,18 @@ const createEventsChooserMurkup = (choosers) => {
   }).join(`\n`);
 };
 
-const getOffers = (offers, selectedOffer) => {
-  return offers
-  .map((offer, index) => {
+const getOffers = (offers, data) => {
+  let IsChecked = [];
+  return offers.map((offer, index) => {
+    if (data === []) {
+      IsChecked = false;
+    } else {
+      IsChecked = data.some((item) => JSON.stringify(item) === JSON.stringify(offer));
+    }
     return (`
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.type}-${index}" type="checkbox" name="event-offer-${offer.type}" ${selectedOffer === offer ? `checked` : ``}
-        <label class="event__offer-label" for="event-offer-${offer.type}-${index}">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${index}" type="checkbox" name="event-offer-${offer.title}" ${IsChecked ? `checked` : ``}>
+        <label class="event__offer-label" for="event-offer-${offer.title}-${index}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -61,11 +66,11 @@ const createEditEventTemplate = (point, options = {}) => {
   }
 
   const cities = Stock.getDestinations().map((destination) => destination.name);
-  const offersS = Stock.getOffers().map((offer) => offer.type);
+  const offerTypes = Stock.getOffers().map((offer) => offer.title === type);
 
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
-  const offersList = getOffers(offers, offersS);
+  const offersList = getOffers(offers, offerTypes);
   const photosList = getPhotosList(photos);
   const citiesList = getCities(cities, city);
   const isFavourite = isFavorite ? `checked` : ``;
@@ -281,11 +286,9 @@ export default class EventEdit extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
-    const eventTypeList = element.querySelector(`.event__type-list`);
-
-    eventTypeList.addEventListener(`change`, (evt) => {
-      evt.preventDefault();
+    element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._type = evt.target.value;
+      this._offers = Stock.getOffers().find((offer) => offer.type === this._type).offers;
 
       this.rerender();
     });
@@ -300,6 +303,11 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--price`).addEventListener(`input`, (evt) => {
       evt.target.value = clearString(evt.target.value);
+    });
+
+    element.querySelector(`#event-start-time-1`).addEventListener(`change`, (evt) => {
+      const endDateInput = element.querySelector(`#event-end-time-1`);
+      endDateInput.value = evt.target.value;
     });
   }
 
