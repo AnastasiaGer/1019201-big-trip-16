@@ -76,7 +76,7 @@ export default class PointController {
     this._mode = mode;
 
     this._eventComponent = new EventItem(point);
-    this._eventEditComponent = new EditEvent(point);
+    this._eventEditComponent = new EditEvent(point, mode);
 
     const eventsList = this._container.querySelector(`.trip-events__list`);
 

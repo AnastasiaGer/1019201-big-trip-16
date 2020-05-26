@@ -22,18 +22,12 @@ const createEventsChooserMurkup = (choosers) => {
   }).join(`\n`);
 };
 
-const getOffers = (offers, data) => {
-  let IsChecked = [];
-  return offers.map((offer, index) => {
-    if (data === []) {
-      IsChecked = false;
-    } else {
-      IsChecked = data.some((item) => JSON.stringify(item) === JSON.stringify(offer));
-    }
+const getOffers = (offers, mode) => {
+  return offers.map((offer) => {
     return (`
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${index}" type="checkbox" name="event-offer-${offer.title}" ${IsChecked ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-${offer.title}-${index}">
+        <input class="event__offer-checkbox  visually-hidden" id="event-${offer.title}" type="checkbox" name="event-${offer.title}"  ${mode === `creating` ? `` : `checked`}>
+        <label class="event__offer-label" for="event-${offer.title}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -55,7 +49,7 @@ const getCities = (citiesName, elem) => {
   }).join(``);
 };
 
-const createEditEventTemplate = (point, options = {}) => {
+const createEditEventTemplate = (point, options, mode) => {
   const {start, end, price, isFavorite, index} = point;
   const {type, city, description, photos, offers, externalData} = options;
 
@@ -66,11 +60,10 @@ const createEditEventTemplate = (point, options = {}) => {
   }
 
   const cities = Stock.getDestinations().map((destination) => destination.name);
-  const offerTypes = Stock.getOffers().map((offer) => offer.title === type);
 
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
-  const offersList = getOffers(offers, offerTypes);
+  const offersList = getOffers(offers, mode);
   const photosList = getPhotosList(photos);
   const citiesList = getCities(cities, city);
   const isFavourite = isFavorite ? `checked` : ``;
@@ -165,9 +158,9 @@ const createEditEventTemplate = (point, options = {}) => {
   );
 };
 export default class EventEdit extends AbstractSmartComponent {
-  constructor(point) {
+  constructor(point, mode) {
     super();
-
+    this._mode = mode;
     this._point = point;
     this._type = point.type;
     this._city = point.city;
@@ -196,7 +189,9 @@ export default class EventEdit extends AbstractSmartComponent {
       photos: this._photos,
       offers: this._offers,
       externalData: this._externalData
-    });
+    },
+    this._mode
+    );
   }
 
   getData() {
