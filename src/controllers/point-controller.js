@@ -87,11 +87,12 @@ export default class PointController {
 
     this._eventEditComponent.setClickHandler(() => {
       if (this._mode !== Mode.CREATING) {
-        this._onDataChange(EmptyEvent, null, this._button);
-        return;
+        this._replaceEditToEvent();
+        document.removeEventListener(`keydown`, this._onEscKeyDown);
+      } else {
+        this._onDataChange(EmptyEvent, null);
+        document.removeEventListener(`keydown`, this._onEscKeyDown);
       }
-      this._replaceEditToEvent();
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
 
     this._eventEditComponent.setSubmitHandler((evt) => {
