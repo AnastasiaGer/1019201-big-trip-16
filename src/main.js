@@ -13,7 +13,7 @@ import TripInfoController from './controllers/trip-info.js';
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
 // test
 
-const AUTHORIZATION = `Basic jnfsjnjfdvmkhdf`;
+const AUTHORIZATION = `Basic ndjndjnjknfjkn`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `big-trip-localstorage`;
 const STORE_VER = `v1`;
@@ -46,7 +46,7 @@ const init = () => {
   const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
   newEventButton.addEventListener(`click`, (evt) => {
     evt.preventDefault();
-    filterController.setDefaultFilter();
+    filterController.setDefaultView();
     tripController.createPoint(newEventButton);
   });
 
@@ -88,7 +88,7 @@ const init = () => {
   });
 
   tripTabsComponent.setOnChange((item) => {
-    filterController.setDefaultFilter();
+    filterController.setDefaultView();
     switch (item) {
       case TablItem.TABLE:
         tripTabsComponent.setActiveItem(TablItem.TABLE);
