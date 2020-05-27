@@ -70,11 +70,11 @@ export default class PointController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  render(point, mode) {
+  render(point, mode, newEventBtn) {
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
     this._mode = mode;
-
+    this._button = newEventBtn;
     this._eventComponent = new EventItem(point);
     this._eventEditComponent = new EditEvent(point, mode);
 
@@ -87,12 +87,11 @@ export default class PointController {
 
     this._eventEditComponent.setClickHandler(() => {
       if (this._mode !== Mode.CREATING) {
-        this._replaceEditToEvent();
-        document.removeEventListener(`keydown`, this._onEscKeyDown);
-      } else {
-        this._onDataChange(EmptyEvent, null);
-        document.removeEventListener(`keydown`, this._onEscKeyDown);
+        this._onDataChange(EmptyEvent, null, this._button);
+        return;
       }
+      this._replaceEditToEvent();
+      document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
 
     this._eventEditComponent.setSubmitHandler((evt) => {
@@ -104,7 +103,7 @@ export default class PointController {
         saveButtonText: `Saving...`,
       });
 
-      this._onDataChange(this, point, data);
+      this._onDataChange(this, point, data, this._button);
       this._eventEditComponent.activeForm();
       this._replaceEditToEvent();
     });
@@ -114,14 +113,14 @@ export default class PointController {
         deleteButtonText: `Deleting...`,
       });
 
-      this._onDataChange(this, point, null);
+      this._onDataChange(this, point, null, this._button);
     });
 
     this._eventEditComponent.setFavoritesButtonClickHandler(() => {
       const newPoint = Point.clone(point);
       newPoint.isFavorite = !newPoint.isFavorite;
 
-      this._onDataChange(this, point, newPoint);
+      this._onDataChange(this, point, newPoint, this._button);
 
       this._mode = Mode.EDIT;
     });
@@ -184,7 +183,7 @@ export default class PointController {
 
     if (isEscKey) {
       if (this._mode === Mode.CREATING) {
-        this._onDataChange(this, EmptyEvent, null);
+        this._onDataChange(this, EmptyEvent, null, this._button);
       }
       this._replaceEditToEvent();
       document.removeEventListener(`keydown`, this._onEscKeyDown);
