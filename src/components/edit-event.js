@@ -22,11 +22,11 @@ const createEventsChooserMurkup = (choosers) => {
   }).join(`\n`);
 };
 
-const getOffers = (offers) => {
+const getOffers = (offers, mode) => {
   return offers.map((offer) => {
     return (`
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-${offer.title}" type="checkbox" name="event-${offer.title}"  ${offer.isChecked ? `checked` : ``}>
+        <input class="event__offer-checkbox  visually-hidden" id="event-${offer.title}" type="checkbox" name="event-${offer.title}"  ${mode === `creating` ? `` : `checked`}>
         <label class="event__offer-label" for="event-${offer.title}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;
@@ -49,8 +49,7 @@ const getCities = (citiesName, elem) => {
   }).join(``);
 };
 
-const createEditEventTemplate = (point, options) => {
-
+const createEditEventTemplate = (point, options, mode) => {
   const {start, end, price, isFavorite, index} = point;
   const {type, city, description, photos, offers, externalData} = options;
 
@@ -64,7 +63,7 @@ const createEditEventTemplate = (point, options) => {
 
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
-  const offersList = getOffers(offers);
+  const offersList = getOffers(offers, mode);
   const photosList = getPhotosList(photos);
   const citiesList = getCities(cities, city);
   const isFavourite = isFavorite ? `checked` : ``;
@@ -159,18 +158,17 @@ const createEditEventTemplate = (point, options) => {
   );
 };
 export default class EventEdit extends AbstractSmartComponent {
-  constructor(point) {
+  constructor(point, mode) {
     super();
-
+    this._mode = mode;
     this._point = point;
     this._type = point.type;
     this._city = point.city;
     this._price = point.price;
     this._description = point.description;
-    this._offers = point.offers;
     this._photos = point.photos;
     this._externalData = DefaultData;
-
+    this._offers = point.offers;
     this._element = null;
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -188,10 +186,12 @@ export default class EventEdit extends AbstractSmartComponent {
       type: this._type,
       city: this._city,
       description: this._description,
-      offers: this._offers,
       photos: this._photos,
+      offers: this._offers,
       externalData: this._externalData
-    });
+    },
+    this._mode
+    );
   }
 
   getData() {
@@ -281,7 +281,6 @@ export default class EventEdit extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
-
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._type = evt.target.value;
       this._offers = Stock.getOffers().find((offer) => offer.type === this._type).offers;
@@ -299,6 +298,11 @@ export default class EventEdit extends AbstractSmartComponent {
 
     element.querySelector(`.event__input--price`).addEventListener(`input`, (evt) => {
       evt.target.value = clearString(evt.target.value);
+    });
+
+    element.querySelector(`#event-start-time-1`).addEventListener(`change`, (evt) => {
+      const endDateInput = element.querySelector(`#event-end-time-1`);
+      endDateInput.value = evt.target.value;
     });
   }
 
