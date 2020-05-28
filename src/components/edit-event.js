@@ -11,7 +11,7 @@ const DefaultData = {
   deleteButtonText: `Delete`,
   saveButtonText: `Save`,
 };
-
+const OFFER_NAME_PREFIX = `event-offer-`;
 const createEventsChooserMurkup = (choosers) => {
   return choosers.map((typeTransport) => {
     return (`<div class="event__type-item">
@@ -22,19 +22,23 @@ const createEventsChooserMurkup = (choosers) => {
   }).join(`\n`);
 };
 
-const getOffers = (offers, mode) => {
+const getOffers = (selectedOffers, offers) => {
   return offers.map((offer) => {
-    return (`
-      <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-${offer.title}" type="checkbox" name="event-${offer.title}"  ${mode === `creating` ? `` : `checked`}>
-        <label class="event__offer-label" for="event-${offer.title}">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;
-        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
+    const {title, price} = offer;
+    const type = title.replace(/\s+/g, ``);
+    const status = selectedOffers.findIndex((it) => it.title === title) !== -1 ? `checked` : ``;
+    return (
+      `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" type="checkbox" name="${OFFER_NAME_PREFIX}${type}" ${status}>
+        <label class="event__offer-label" for="event-offer-${type}-1">
+          <span class="event__offer-title">${title}</span>
+          &plus;
+          &euro;&nbsp;<span class="event__offer-price">${price}</span>
         </label>
       </div>`
     );
-  }).join(``);
+  })
+  .join(`\n`);
 };
 
 const getPhotosList = (photos) => {
@@ -49,9 +53,9 @@ const getCities = (citiesName, elem) => {
   }).join(``);
 };
 
-const createEditEventTemplate = (point, options, mode) => {
+const createEditEventTemplate = (point, options) => {
   const {start, end, price, isFavorite, index} = point;
-  const {type, city, description, photos, offers, externalData} = options;
+  const {type, city, description, photos, offers, selectedOffers, externalData} = options;
 
   let creatingPoint = false;
 
@@ -63,7 +67,7 @@ const createEditEventTemplate = (point, options, mode) => {
 
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
-  const offersList = getOffers(offers, mode);
+  const offersList = getOffers(selectedOffers, offers);
   const photosList = getPhotosList(photos);
   const citiesList = getCities(cities, city);
   const isFavourite = isFavorite ? `checked` : ``;
@@ -168,7 +172,8 @@ export default class EventEdit extends AbstractSmartComponent {
     this._description = point.description;
     this._photos = point.photos;
     this._externalData = DefaultData;
-    this._offers = point.offers;
+    this._pointOffers = point.offers;
+    this._selectedOffers = point.offers;
     this._element = null;
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -187,7 +192,8 @@ export default class EventEdit extends AbstractSmartComponent {
       city: this._city,
       description: this._description,
       photos: this._photos,
-      offers: this._offers,
+      offers: this._pointOffers,
+      selectedOffers: this._selectedOffers,
       externalData: this._externalData
     },
     this._mode
@@ -234,7 +240,8 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._type = point.type;
     this._city = point.city;
-
+    this._pointOffers = point.offers;
+    this._selectedOffers = point.offers;
     this.rerender();
   }
 
@@ -283,8 +290,8 @@ export default class EventEdit extends AbstractSmartComponent {
     const element = this.getElement();
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._type = evt.target.value;
-      this._offers = Stock.getOffers().find((offer) => offer.type === this._type).offers;
-
+      this._pointOffers = Stock.getOffers().find((offer) => offer.type === this._type).offers;
+      this._selectedOffers = [];
       this.rerender();
     });
 
