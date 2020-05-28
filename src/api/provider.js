@@ -1,69 +1,37 @@
 import {nanoid} from "nanoid";
 import Point from "../models/point.js";
 
-const isOnline = () => {
-  return window.navigator.onLine;
-};
-
-const getSyncedPoints = (items) => {
-  return items.filter(({success}) => success)
-    .map(({payload}) => payload.point);
-};
-
-const createStoreStructure = (items) => {
-  return items.reduce((acc, current) => {
-    return Object.assign({}, acc, {
-      [current.id]: current,
-    });
-  }, {});
-};
 export default class Provider {
   constructor(api, store) {
     this._api = api;
     this._store = store;
   }
 
-  getDestinations() {
-    if (isOnline()) {
-      return this._api.getDestinations();
-    }
+  getData() {
+    if (this._isOnline()) {
+      return this._api.getData()
+        .then((points) => {
+          const items = this._createStoreStructure(points.map((point) => point.toRAW()));
 
-    return Promise.reject(`offline logic is not implemented`);
-  }
+          this._store.setItems(items);
 
-  getOffers() {
-    if (isOnline()) {
-      return this._api.getOffers();
-    }
-
-    return Promise.reject(`offline logic is not implemented`);
-  }
-
-  getPoints() {
-    if (isOnline()) {
-      return this._api.getPoints()
-         .then((points) => {
-           const items = createStoreStructure(points.map((point) => point.toRAW()));
-
-           this._store.setItems(items);
-
-           return points;
-         });
+          return points;
+        });
     }
 
     const storePoints = Object.values(this._store.getItems());
 
-    return Promise.resolve(Point.parseTasks(storePoints));
+    return Promise.resolve(Point.parsePoints(storePoints));
   }
 
   createPoint(point) {
-    if (isOnline()) {
+    if (this._isOnline()) {
       return this._api.createPoint(point)
-         .then((newPoint) => {
-           this._store.setItem(newPoint.id, newPoint.toRAW());
+        .then((newPoint) => {
+          this._store.setItem(newPoint.id, newPoint.toRAW());
 
-           return newPoint;
-         });
+          return newPoint;
+        });
     }
 
     const localNewPointId = nanoid();
@@ -74,17 +42,17 @@ export default class Provider {
     return Promise.resolve(localNewPoint);
   }
 
-  updatePoint(id, point) {
-    if (isOnline()) {
-      return this._api.updatePoint(id, point)
-         .then((newPoint) => {
-           this._store.setItem(newPoint.id, newPoint.toRAW());
+  updatePoint(id, data) {
+    if (this._isOnline()) {
+      return this._api.updatePoint(id, data)
+        .then((newPoint) => {
+          this._store.setItem(newPoint.id, newPoint.toRAW());
 
-           return newPoint;
-         });
+          return newPoint;
+        });
     }
 
-    const localPoint = Point.clone(Object.assign(point, {id}));
+    const localPoint = Point.clone(Object.assign(data, {id}));
 
     this._store.setItem(id, localPoint.toRAW());
 
@@ -92,9 +60,9 @@ export default class Provider {
   }
 
   deletePoint(id) {
-    if (isOnline()) {
+    if (this._isOnline()) {
       return this._api.deletePoint(id)
-      .then(() => this._store.removeItem(id));
+        .then(() => this._store.removeItem(id));
     }
 
     this._store.removeItem(id);
@@ -103,20 +71,38 @@ export default class Provider {
   }
 
   sync() {
-    if (isOnline()) {
+    if (this._isOnline()) {
       const storePoints = Object.values(this._store.getItems());
 
       return this._api.sync(storePoints)
         .then((response) => {
-          const createdPoints = getSyncedPoints(response.created);
-          const updatedPoints = getSyncedPoints(response.updated);
 
-          const items = createStoreStructure([...createdPoints, ...updatedPoints]);
+          const createdPoints = this._getSyncedPoints(response.created);
+          const updatedPoints = this._getSyncedPoints(response.updated);
+
+          const items = this._createStoreStructure([...createdPoints, ...updatedPoints]);
 
           this._store.setItems(items);
         });
     }
 
     return Promise.reject(new Error(`Sync data failed`));
+  }
+
+  _isOnline() {
+    return window.navigator.onLine;
+  }
+
+  _getSyncedPoints(items) {
+    return items.filter(({success}) => success)
+      .map(({payload}) => payload.point);
+  }
+
+  _createStoreStructure(items) {
+    return items.reduce((acc, item) => {
+      return Object.assign({}, acc, {
+        [item.id]: item,
+      });
+    }, {});
   }
 }

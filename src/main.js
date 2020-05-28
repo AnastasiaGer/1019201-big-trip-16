@@ -54,12 +54,9 @@ const init = () => {
   render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
   statisticsComponent.hide();
 
-  Promise.all([
-    apiWithProvider.getPoints(),
-    apiWithProvider.getDestinations(),
-    apiWithProvider.getOffers()
-  ]).then((res) => {
-    pointsModel. setPoints(res[0]);
+  apiWithProvider.getData()
+  .then((points) => {
+    pointsModel. setPoints(points);
     Object.values(FILTER_TYPE).map((filter) => {
       const filteredPoints = getEventsByFilter(pointsModel.getPointsAll(), filter.toLowerCase());
       if (filteredPoints.length === 0) {

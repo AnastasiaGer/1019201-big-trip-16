@@ -1,5 +1,5 @@
 import Point from "../models/point.js";
-import Store from '../models/stock.js';
+import Stock from '../models/stock.js';
 
 const Method = {
   GET: `GET`,
@@ -7,6 +7,8 @@ const Method = {
   PUT: `PUT`,
   DELETE: `DELETE`
 };
+
+const URLS = [`destinations`, `offers`, `points`];
 
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
@@ -22,23 +24,37 @@ export default class API {
     this._authorization = authorization;
   }
 
-  getDestinations() {
-    return this._load({url: `destinations`})
-      .then((response) => response.json())
-      .then(Store.setDestinations);
-  }
-
-  getOffers() {
-    return this._load({url: `offers`})
-      .then((response) => response.json())
-      .then(Store.setOffers);
-  }
-
   getPoints() {
     return this._load({url: `points`})
     .then((response) => response.json())
     .then(Point.parsePoints);
   }
+
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then((response) => response.json())
+      .then(Stock.setDestinations);
+  }
+
+  getOffers() {
+    return this._load({url: `offers`})
+      .then((response) => response.json())
+      .then(Stock.setOffers);
+  }
+
+  getData() {
+    const requests = URLS.map((it) => this._load({url: it}));
+    return Promise.all(requests)
+      .then((responses) => Promise.all(responses.map((it) => it.json())))
+      .then((responses) => {
+        const [destinations, offers, points] = responses;
+        Stock.setDestinations(destinations);
+        Stock.setOffers(offers);
+        return points;
+      })
+      .then(Point.parsePoints);
+  }
+
 
   createPoint(point) {
     return this._load({
@@ -64,16 +80,6 @@ export default class API {
 
   deletePoint(id) {
     return this._load({url: `points/${id}`, method: Method.DELETE});
-  }
-
-  sync(data) {
-    return this._load({
-      url: `points/sync`,
-      method: Method.POST,
-      body: JSON.stringify(data),
-      headers: new Headers({"Content-Type": `application/json`})
-    })
-      .then((response) => response.json());
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
