@@ -56,7 +56,7 @@ const init = () => {
 
   apiWithProvider.getData()
   .then((points) => {
-    pointsModel. setPoints(points);
+    pointsModel.setPoints(points);
     Object.values(FILTER_TYPE).map((filter) => {
       const filteredPoints = getEventsByFilter(pointsModel.getPointsAll(), filter.toLowerCase());
       if (filteredPoints.length === 0) {

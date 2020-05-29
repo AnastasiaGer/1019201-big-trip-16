@@ -142,7 +142,7 @@ const createEditEventTemplate = (point, options) => {
       </header>
       ${offers.length > 0 || description.length > 0 ?
       `<section class="event__details">
-        ${offers.length > 0 ?
+        ${offers.length >= 0 ?
       `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
