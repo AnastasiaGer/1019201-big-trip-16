@@ -1,7 +1,7 @@
 export default class Stock {
   constructor() {
-    this._destinations = null;
-    this._offers = null;
+    this._destinations = [];
+    this._offers = [];
   }
 
   static setDestinations(destinations) {
