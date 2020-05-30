@@ -11,7 +11,8 @@ import Store from "./api/store.js";
 import TripController from "./controllers/trip-controller.js";
 import TripInfoController from './controllers/trip-info.js';
 import TripTabs, {TablItem} from "./components/trip-tabs.js";
-// test
+import Stock from './models/stock.js';
+
 
 const AUTHORIZATION = `Basic jndfjndfjknnjk`;
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
@@ -54,35 +55,77 @@ const init = () => {
   render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
   statisticsComponent.hide();
 
-  apiWithProvider.getData()
-  .then((points) => {
-    pointsModel.setPoints(points);
-    Object.values(FILTER_TYPE).map((filter) => {
-      const filteredPoints = getEventsByFilter(pointsModel.getPointsAll(), filter.toLowerCase());
-      if (filteredPoints.length === 0) {
-        return filterController.disableEmptyFilter(filter.toLowerCase());
+  // Работа с данными
+  // -------------------------------------
+  const loadDestinations = () => {
+    return apiWithProvider.getDestinations()
+    .then((destinations) => {
+      if (destinations) {
+        Stock.setDestinations(destinations);
       }
-      return filterController.render();
+      return destinations;
+    })
+    .catch(() => {
+      apiWithProvider.onError(`Ooops, SPA can't fetch destination list :(`);
     });
-    tripController.render();
-  });
+  };
+
+  const loadOffers = () => {
+    return apiWithProvider.getOffers()
+    .then((offers) => {
+      if (offers) {
+        Stock.setOffers(offers);
+      }
+      return offers;
+    })
+    .catch(() => {
+      apiWithProvider.onError(`Ooops, SPA can't fetch offer list :(`);
+    });
+  };
+
+  const loadInfo = Promise.all([loadDestinations(), loadOffers()]);
+
+  loadInfo
+  .then((result) => {
+    if (result.every((el) => el !== undefined)) {
+      apiWithProvider.getPoints()
+      .then((points) => {
+        if (points) {
+          pointsModel.setPoints(points);
+          tripInfoController.render();
+          Object.values(FILTER_TYPE).map((filter) => {
+            const filteredPoints = getEventsByFilter(pointsModel.getPointsAll(), filter.toLowerCase());
+            if (filteredPoints.length === 0) {
+              return filterController.disableEmptyFilter(filter.toLowerCase());
+            }
+            return filterController.render();
+          });
+          tripController.render();
+        }
+      });
+    }
+  })
+  .then(apiWithProvider.onLoad);
+  // -------------------------------------
+
+  // Offline
+  const onOffline = () => {
+    document.title += ` [offline]`;
+  };
 
   window.addEventListener(`load`, () => {
-    navigator.serviceWorker.register(`/sw.js`)
-      .then(() => {
-      }).catch(() => {
-      });
+    navigator.serviceWorker.register(`/sw.js`);
+    if (!window.navigator.onLine) {
+      onOffline();
+    }
   });
 
   window.addEventListener(`online`, () => {
     document.title = document.title.replace(` [offline]`, ``);
-
     apiWithProvider.sync();
   });
 
-  window.addEventListener(`offline`, () => {
-    document.title += ` [offline]`;
-  });
+  window.addEventListener(`offline`, onOffline);
 
   tripTabsComponent.setOnChange((item) => {
     filterController.setDefaultView();

@@ -3,19 +3,16 @@ export default class Store {
     this._storage = storage;
     this._storeKey = key;
   }
-  getItems() {
+
+  getItems(directory = null) {
     try {
-      return JSON.parse(this._storage.getItem(this._storeKey)) || {};
+      if (directory) {
+        return JSON.parse(this._storage.getItem(this._storeKey))[directory] || [];
+      }
+      return JSON.parse(this._storage.getItem(this._storeKey)) || [];
     } catch (err) {
       return {};
     }
-  }
-
-  setItems(items) {
-    this._storage.setItem(
-        this._storeKey,
-        JSON.stringify(items)
-    );
   }
 
   setItem(key, value) {
@@ -31,14 +28,16 @@ export default class Store {
     );
   }
 
-  removeItem(key) {
-    const store = this.getItems();
+  setItemElement(directory, element) {
+    const [key, value] = element;
+    const elementsInStore = this.getItems(directory);
+    elementsInStore[key] = value;
+    this.setItem(directory, elementsInStore);
+  }
 
-    delete store[key];
-
-    this._storage.setItem(
-        this._storeKey,
-        JSON.stringify(store)
-    );
+  removeItemElement(directory, key) {
+    const elementsInStore = this.getItems(directory);
+    delete elementsInStore[key];
+    this.setItem(directory, elementsInStore);
   }
 }
