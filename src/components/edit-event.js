@@ -7,8 +7,6 @@ import flatpickr from "flatpickr";
 import moment from "moment";
 import Stock from '../models/stock.js';
 
-const OFFER_NAME_PREFIX = `event-offer-`;
-
 const DefaultData = {
   deleteButtonText: `Delete`,
   saveButtonText: `Save`,
@@ -24,23 +22,19 @@ const createEventsChooserMurkup = (choosers) => {
   }).join(`\n`);
 };
 
-const getOffers = (selectedOffers, offers) => {
-  return offers.map((offer) => {
+const getOffers = (selectedOffers, allOffers) => {
+  return allOffers.map((offer, index) => {
     const {title, price} = offer;
-    const type = title.replace(/\s+/g, ``);
-    const status = selectedOffers.map((el) => el.title).indexOf(title) !== -1 ? `checked` : ``;
-    return (
-      `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" type="checkbox" name="${OFFER_NAME_PREFIX}${type}" ${status}>
-        <label class="event__offer-label" for="event-offer-${type}-1">
+    return `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${index + 1}" type="checkbox" name="event-offer" value="${title}"
+        ${selectedOffers.map((el) => el.title).indexOf(title) !== -1 ? `checked` : ``}>
+        <label class="event__offer-label" for="event-offer-${index + 1}">
           <span class="event__offer-title">${title}</span>
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${price}</span>
         </label>
-      </div>`
-    );
-  })
-  .join(`\n`);
+      </div>`;
+  }).join(`\n`);
 };
 
 const getPhotosList = (photos) => {
@@ -66,11 +60,11 @@ const createEditEventTemplate = (point, options) => {
   }
 
   const cities = Stock.getDestinations().map((destination) => destination.name);
-  const selectedOffers = [].concat(...Stock.getOffers().filter((offer) => offer.type === type).map((offer) => offer.offers));
+  const offersOfCurrentType = [].concat(...Stock.getOffers().filter((offer) => offer.type === type).map((offer) => offer.offers));
 
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
-  const offersList = getOffers(offers, selectedOffers);
+  const offersList = getOffers(offers, offersOfCurrentType);
   const photosList = getPhotosList(photos);
   const citiesList = getCities(cities, city);
   const isFavourite = isFavorite ? `checked` : ``;
@@ -176,7 +170,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._photos = point.photos;
     this._externalData = DefaultData;
     this._allOffers = Stock.getOffers();
-    this._selectesOffers = point.offers;
+    this._offers = point.offers;
     this._element = null;
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -195,7 +189,7 @@ export default class EventEdit extends AbstractSmartComponent {
       city: this._city,
       description: this._description,
       photos: this._photos,
-      offers: this._selectesOffers,
+      offers: this._offers,
       externalData: this._externalData
     },
     this._mode
@@ -240,7 +234,7 @@ export default class EventEdit extends AbstractSmartComponent {
   reset() {
     const point = this._point;
     this._type = point.type;
-    this._selectesOffers = point.offers;
+    this._offers = point.offers;
     this._city = point.city;
   }
 
