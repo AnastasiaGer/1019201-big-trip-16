@@ -55,8 +55,6 @@ const init = () => {
   render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
   statisticsComponent.hide();
 
-  // Работа с данными
-  // -------------------------------------
   const loadDestinations = () => {
     return apiWithProvider.getDestinations()
     .then((destinations) => {
@@ -106,9 +104,7 @@ const init = () => {
     }
   })
   .then(apiWithProvider.onLoad);
-  // -------------------------------------
 
-  // Offline
   const onOffline = () => {
     document.title += ` [offline]`;
   };
