@@ -1,5 +1,4 @@
 import Point from "../models/point.js";
-import Store from '../models/stock.js';
 
 const Method = {
   GET: `GET`,
@@ -22,29 +21,27 @@ export default class API {
     this._authorization = authorization;
   }
 
-  getDestinations() {
-    return this._load({url: `destinations`})
-      .then((response) => response.json())
-      .then(Store.setDestinations);
-  }
-
-  getOffers() {
-    return this._load({url: `offers`})
-      .then((response) => response.json())
-      .then(Store.setOffers);
-  }
-
   getPoints() {
     return this._load({url: `points`})
     .then((response) => response.json())
     .then(Point.parsePoints);
   }
 
-  createPoint(point) {
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then((response) => response.json());
+  }
+
+  getOffers() {
+    return this._load({url: `offers`})
+      .then((response) => response.json());
+  }
+
+  createPoint(data) {
     return this._load({
       url: `points`,
       method: Method.POST,
-      body: JSON.stringify(point.toRAW()),
+      body: JSON.stringify(data.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then((response) => response.json())

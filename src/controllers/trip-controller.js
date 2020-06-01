@@ -42,7 +42,7 @@ export default class TripController {
     this._filterController = filterController;
     this._pointsModel = pointsModel;
     this._api = api;
-    this._newEventButton = null;
+    this._newEventButton = document.querySelector(`button.trip-main__event-add-btn`);
     this._pointsControllers = [];
     this._noTasksComponent = new NoEvents();
     this._sortComponent = new Sorting();
@@ -89,7 +89,7 @@ export default class TripController {
   }
 
   createPoint(button) {
-    this._newEventButton = button;
+    this._newEventButton.disabled = true;
 
     this._creatingPoint = new PointController(this._container, this._onDataChange, this._onViewChange);
     this._filterController.setDefaultView();
@@ -119,6 +119,7 @@ export default class TripController {
 
     if (oldData === EmptyEvent) {
       this._creatingPoint = null;
+      this._newEventButton.disabled = false;
       if (newData === null) {
         pointController.destroy();
         this._updatePoints();

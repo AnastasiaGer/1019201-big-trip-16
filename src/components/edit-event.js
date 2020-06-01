@@ -7,6 +7,8 @@ import flatpickr from "flatpickr";
 import moment from "moment";
 import Stock from '../models/stock.js';
 
+const OFFER_NAME_PREFIX = `event-offer-`;
+
 const DefaultData = {
   deleteButtonText: `Delete`,
   saveButtonText: `Save`,
@@ -22,19 +24,23 @@ const createEventsChooserMurkup = (choosers) => {
   }).join(`\n`);
 };
 
-const getOffers = (offers, mode) => {
+const getOffers = (selectedOffers, offers) => {
   return offers.map((offer) => {
-    return (`
-      <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-${offer.title}" type="checkbox" name="event-${offer.title}"  ${mode === `creating` ? `` : `checked`}>
-        <label class="event__offer-label" for="event-${offer.title}">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;
-        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
+    const {title, price} = offer;
+    const type = title.replace(/\s+/g, ``);
+    const status = selectedOffers.findIndex((it) => it.title === title) !== -1 ? `checked` : ``;
+    return (
+      `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" type="checkbox" name="${OFFER_NAME_PREFIX}${type}" ${status}>
+        <label class="event__offer-label" for="event-offer-${type}-1">
+          <span class="event__offer-title">${title}</span>
+          &plus;
+          &euro;&nbsp;<span class="event__offer-price">${price}</span>
         </label>
       </div>`
     );
-  }).join(``);
+  })
+  .join(`\n`);
 };
 
 const getPhotosList = (photos) => {
@@ -49,7 +55,7 @@ const getCities = (citiesName, elem) => {
   }).join(``);
 };
 
-const createEditEventTemplate = (point, options, mode) => {
+const createEditEventTemplate = (point, options) => {
   const {start, end, price, isFavorite, index} = point;
   const {type, city, description, photos, offers, externalData} = options;
 
@@ -60,10 +66,11 @@ const createEditEventTemplate = (point, options, mode) => {
   }
 
   const cities = Stock.getDestinations().map((destination) => destination.name);
+  const offersOfCurrentType = [].concat(...Stock.getOffers().filter((offer) => offer.type === type).map((offer) => offer.offers));
 
   const startDate = moment(start).format(`DD/MM/YY HH:mm`);
   const endDate = moment(end).format(`DD/MM/YY HH:mm`);
-  const offersList = getOffers(offers, mode);
+  const offersList = getOffers(offers, offersOfCurrentType);
   const photosList = getPhotosList(photos);
   const citiesList = getCities(cities, city);
   const isFavourite = isFavorite ? `checked` : ``;
@@ -135,7 +142,7 @@ const createEditEventTemplate = (point, options, mode) => {
       </header>
       ${offers.length > 0 || description.length > 0 ?
       `<section class="event__details">
-        ${offers.length > 0 ?
+        ${offers.length >= 0 ?
       `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
@@ -168,6 +175,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._description = point.description;
     this._photos = point.photos;
     this._externalData = DefaultData;
+    this._allOffers = Stock.getOffers();
     this._offers = point.offers;
     this._element = null;
     this._flatpickrStartDate = null;
@@ -231,11 +239,9 @@ export default class EventEdit extends AbstractSmartComponent {
 
   reset() {
     const point = this._point;
-
     this._type = point.type;
+    this._offers = point.offers;
     this._city = point.city;
-
-    this.rerender();
   }
 
   setClickHandler(handler) {
@@ -283,7 +289,7 @@ export default class EventEdit extends AbstractSmartComponent {
     const element = this.getElement();
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._type = evt.target.value;
-      this._offers = Stock.getOffers().find((offer) => offer.type === this._type).offers;
+      this._offers = Stock.getOffers();
 
       this.rerender();
     });

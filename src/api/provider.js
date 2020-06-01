@@ -5,115 +5,121 @@ const isOnline = () => {
   return window.navigator.onLine;
 };
 
-const getSyncedPoints = (items) => {
-  return items.filter(({success}) => success)
+const getSyncedPoints = (points) => {
+  return points.filter(({success}) => success)
     .map(({payload}) => payload.point);
 };
 
-const createStoreStructure = (items) => {
-  return items.reduce((acc, current) => {
+const createStoreStructure = (points) => {
+  return points.reduce((acc, current) => {
     return Object.assign({}, acc, {
       [current.id]: current,
     });
   }, {});
 };
+
 export default class Provider {
   constructor(api, store) {
     this._api = api;
     this._store = store;
   }
 
+  getPoints() {
+    if (isOnline()) {
+      return this._api.getPoints()
+        .then((points) => {
+          const elements = createStoreStructure(points.map((point) => point.toRAW()));
+          this._store.setItem(`points`, elements);
+          return points;
+        });
+    }
+    const storePoints = Object.values(this._store.getItems(`points`));
+    return Promise.resolve(Point.parsePoints(storePoints));
+  }
+
   getDestinations() {
     if (isOnline()) {
-      return this._api.getDestinations();
+      return this._api.getDestinations()
+        .then((destinations) => {
+          this._store.setItem(`destinations`, destinations);
+          return destinations;
+        });
     }
-
-    return Promise.reject(`offline logic is not implemented`);
+    const storeDestinations = this._store.getItems(`destinations`);
+    return Promise.resolve(storeDestinations);
   }
 
   getOffers() {
     if (isOnline()) {
-      return this._api.getOffers();
+      return this._api.getOffers()
+        .then((offers) => {
+          this._store.setItem(`offers`, offers);
+          return offers;
+        });
     }
 
-    return Promise.reject(`offline logic is not implemented`);
+    const storeOffers = Object.values(this._store.getItems(`offers`));
+    return Promise.resolve(storeOffers);
   }
 
-  getPoints() {
+  createPoint(data) {
     if (isOnline()) {
-      return this._api.getPoints()
-         .then((points) => {
-           const items = createStoreStructure(points.map((point) => point.toRAW()));
-
-           this._store.setItems(items);
-
-           return points;
-         });
-    }
-
-    const storePoints = Object.values(this._store.getItems());
-
-    return Promise.resolve(Point.parseTasks(storePoints));
-  }
-
-  createPoint(point) {
-    if (isOnline()) {
-      return this._api.createPoint(point)
-         .then((newPoint) => {
-           this._store.setItem(newPoint.id, newPoint.toRAW());
-
-           return newPoint;
-         });
+      return this._api.createPoint(data)
+      .then((newPoint) => {
+        this._store.setItemElement(`points`, [newPoint.id, newPoint.toRAW()]);
+        return newPoint;
+      });
     }
 
     const localNewPointId = nanoid();
-    const localNewPoint = Point.clone(Object.assign(point, {id: localNewPointId}));
+    const localNewPoint = Point.clone(Object.assign(data, {id: localNewPointId}));
 
-    this._store.setItem(localNewPoint.id, localNewPoint.toRAW());
+    this._store.setItemElement(`points`, [localNewPoint.id, localNewPoint.toRAW()]);
 
+    this._needToSync = true;
     return Promise.resolve(localNewPoint);
   }
 
-  updatePoint(id, point) {
+  updatePoint(id, data) {
     if (isOnline()) {
-      return this._api.updatePoint(id, point)
-         .then((newPoint) => {
-           this._store.setItem(newPoint.id, newPoint.toRAW());
-
-           return newPoint;
-         });
+      return this._api.updatePoint(id, data)
+        .then((newPoint) => {
+          this._store.setItemElement(`points`, [newPoint.id, newPoint.toRAW()]);
+          return newPoint;
+        });
     }
 
-    const localPoint = Point.clone(Object.assign(point, {id}));
+    const localPoint = Point.clone(Object.assign(data, {id}));
+    this._store.setItemElement(`points`, [localPoint.id, localPoint.toRAW()]);
 
-    this._store.setItem(id, localPoint.toRAW());
-
+    this._needToSync = true;
     return Promise.resolve(localPoint);
   }
 
   deletePoint(id) {
     if (isOnline()) {
       return this._api.deletePoint(id)
-      .then(() => this._store.removeItem(id));
+        .then(() => this._store.removeItemElement(`points`, id));
     }
 
-    this._store.removeItem(id);
-
+    this._store.removeItemElement(`points`, id);
+    this._needToSync = true;
     return Promise.resolve();
   }
 
   sync() {
     if (isOnline()) {
-      const storePoints = Object.values(this._store.getItems());
+      const storePoints = Object.values(this._store.getItems(`points`));
 
       return this._api.sync(storePoints)
         .then((response) => {
+
           const createdPoints = getSyncedPoints(response.created);
           const updatedPoints = getSyncedPoints(response.updated);
 
-          const items = createStoreStructure([...createdPoints, ...updatedPoints]);
+          const points = createStoreStructure([...createdPoints, ...updatedPoints]);
 
-          this._store.setItems(items);
+          this._store.setItem(`points`, points);
         });
     }
 

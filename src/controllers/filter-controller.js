@@ -48,7 +48,6 @@ export default class FilterController {
   setDefaultView() {
     this._pointsModel.setFilter(FILTER_TYPE.EVERYTHING);
     this._tripFiltersComponent.setActiveItem(FILTER_TYPE.EVERYTHING);
-    this.render();
   }
 
   disableEmptyFilter(currentFilter, isDisabled) {
