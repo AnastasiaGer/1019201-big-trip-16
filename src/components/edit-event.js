@@ -7,6 +7,8 @@ import flatpickr from "flatpickr";
 import moment from "moment";
 import Stock from '../models/stock.js';
 
+const OFFER_NAME_PREFIX = `event-offer-`;
+
 const DefaultData = {
   deleteButtonText: `Delete`,
   saveButtonText: `Save`,
@@ -22,19 +24,23 @@ const createEventsChooserMurkup = (choosers) => {
   }).join(`\n`);
 };
 
-const getOffers = (selectedOffers, allOffers) => {
-  return allOffers.map((offer, index) => {
+const getOffers = (selectedOffers, offers) => {
+  return offers.map((offer) => {
     const {title, price} = offer;
-    return `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${index + 1}" type="checkbox" name="event-offer" value="${title}"
-        ${selectedOffers.map((el) => el.title).indexOf(title) !== -1 ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-${index + 1}">
+    const type = title.replace(/\s+/g, ``);
+    const status = selectedOffers.findIndex((it) => it.title === title) !== -1 ? `checked` : ``;
+    return (
+      `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" type="checkbox" name="${OFFER_NAME_PREFIX}${type}" ${status}>
+        <label class="event__offer-label" for="event-offer-${type}-1">
           <span class="event__offer-title">${title}</span>
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${price}</span>
         </label>
-      </div>`;
-  }).join(`\n`);
+      </div>`
+    );
+  })
+  .join(`\n`);
 };
 
 const getPhotosList = (photos) => {
@@ -283,7 +289,7 @@ export default class EventEdit extends AbstractSmartComponent {
     const element = this.getElement();
     element.querySelector(`.event__type-list`).addEventListener(`change`, (evt) => {
       this._type = evt.target.value;
-      this._allOffers = Stock.getOffers().find((offer) => offer.type === this._type).offers;
+      this._offers = Stock.getOffers();
 
       this.rerender();
     });
