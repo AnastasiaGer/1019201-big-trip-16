@@ -15,7 +15,7 @@ import Stock from './models/stock.js';
 
 
 const AUTHORIZATION = `Basic jndfjndfjknnjk`;
-const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+const END_POINT = `https://16.ecmascript.pages.academy/big-trip`;
 const STORE_PREFIX = `big-trip-localstorage`;
 const STORE_VER = `v1`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
